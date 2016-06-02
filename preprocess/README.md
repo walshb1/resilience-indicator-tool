@@ -20,3 +20,10 @@ Options:
   --topojson    Generate a topojson file                        [boolean]
   --help        Show help                                       [boolean]
 ```
+#### Example
+To generate the philippines topojson and output map png's run:
+
+```
+./index --config phl/config.js --web
+```
+See phl/config.js for configuration details.
