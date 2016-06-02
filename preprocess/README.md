@@ -7,7 +7,7 @@ The scripts take a shapefile, a csv containing model input data and a configurat
 **Note:** The scripts in the **world** package are for processing world data only.
 
 ```
-Usage: /usr/bin/nodejs index.js [--config phl/config.js,
+Usage: ./index.js [--config phl/config.js,
                                  --clean, --svg, --web,
                                  --topojson
                                 ]
