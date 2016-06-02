@@ -12,31 +12,27 @@ var app = {};
 // container for application state
 app.state = {};
 
-// returns geojson features from topojson
-_getCountries = function(data) {
-    // TODO could be provinces either so get semantics right..
-    return topojson.feature(data, data.objects.countries).features;
-}
-
 // loads the initial data and populates application state
 _loadInitialData = function() {
     var d = Q.defer();
-    Q.all([_loadMapData(), _loadInputData()])
+    Q.all([_loadMapData(), _loadInputData(), _loadConfig()])
         .then(function(results) {
+            app.state.config = results[2];
             app.state.layers = results[0];
-            app.state.features = _getCountries(results[0]);
+            app.state.features = _getModelFeatures(results[0]);
             app.state.outputDomains = _populateOutputDomains();
             app.state.inputInfo = results[1];
             app.state.inputDomains = _populateInputDomains(results[1]);
+            app.state.selectedFeature = app.state.features[0];
             d.resolve();
         });
-    return d.promise;
+        return d.promise;
 }
 
 // load the map data
 _loadMapData = function() {
     var d = Q.defer();
-    $.getJSON('world.json', function(data) {
+    $.getJSON('features.json', function(data) {
         d.resolve(data);
     })
     return d.promise
@@ -49,6 +45,20 @@ _loadInputData = function() {
         d.resolve(data);
     });
     return d.promise;
+}
+
+// load the application configuration
+_loadConfig = function() {
+    var d = Q.defer();
+    $.getJSON('config.json', function(data) {
+        d.resolve(data);
+    });
+    return d.promise;
+}
+
+// returns geojson features from topojson
+_getModelFeatures = function(data) {
+    return topojson.feature(data, data.objects.model_features).features;
 }
 
 // Collects values for each of the output domains.
@@ -79,10 +89,7 @@ _populateOutputDomains = function() {
 // Collects input objects to render input sliders
 _populateInputDomains = function(data) {
     // TODO set from configuration
-    var params = ['axfin_p', 'axfin_r', 'axhealth', 'finance_pre',
-        'pe', 'plgp', 'prepare_scaleup', 'pv', 'rating', 'share1',
-        'social_p', 'social_r', 'unemp', "protection", "fa", "v"
-    ];
+    var params = app.state.config.inputs;
     var inputDomains = [];
     $.each(data, function(i, val) {
         if (params.indexOf(val.key) > -1) {
@@ -111,10 +118,11 @@ _createInputSliders = function(data) {
 
 // generate the scatter plots
 _createScatterPlots = function() {
-    var countries = app.state.features;
-    var input = inputs.getConfig()['pv'];
+    var features = app.state.features;
+    var defaultInput = app.state.config.default_input;
+    var input = inputs.getConfig()[defaultInput];
     var config = _renderConfig();
-    plots.features = countries;
+    plots.features = features;
     plots.output(config);
     plots.input(input);
 }
@@ -147,11 +155,9 @@ _renderConfig = function(e) {
             'chloropleth_title': chloropleth_title,
             'colorScale': colorScale
         }
-    }
-    else if (app.state.selectedOutput){
+    } else if (app.state.selectedOutput) {
         return app.state.selectedOutput;
-    }
-    else    {
+    } else {
         // defaults
         var colorScale = styles.colorScale('resilience', app.state.outputDomains['resilience']);
         return {
@@ -167,7 +173,7 @@ app.init = function() {
     // load inital data, set application state then draw ui components
     _loadInitialData().then(function() {
         var p = app.drawUI();
-        p.then(function(){
+        p.then(function() {
             console.log('UI Finished');
             $("#spinner").css('display', 'none');
             $('#ui').css('visibility', 'visible');
@@ -204,13 +210,12 @@ app.drawUI = function() {
         .then(function() {
             // select the country
             var selectedFeature;
-            if (app.state.selectedFeature){
+            if (app.state.selectedFeature) {
                 feature = app.state.selectedFeature;
-            }
-            else {
+            } else {
                 feature = d3.select('.AUS') // TODO configurable
-                   .classed('featureselect', true)
-                   .datum();
+                    .classed('featureselect', true)
+                    .datum();
             }
             // trigger default country selection
             $.event.trigger({
@@ -225,15 +230,15 @@ app.drawUI = function() {
 // update the UI
 app.updateUI = function(data) {
     // update state
-    $.each(app.state.features, function(idx, feature){
+    $.each(app.state.features, function(idx, feature) {
         var props = feature.properties;
-        if (props.ISO_Codes == data.ISO_Codes){
+        if (props.iso == data.iso) {
             $.extend(props, data);
         }
     });
     app.state.outputDomains = _populateOutputDomains();
     app.state.inputDomains = _populateInputDomains(app.state.inputInfo);
-    app.drawUI().then(function(){
+    app.drawUI().then(function() {
         $('#spinner').css('display', 'none');
         $('#mask').css('opacity', '1');
     });
@@ -246,12 +251,12 @@ app.runmodel = function() {
     $('#spinner span').html('Running..');
     $('#spinner').css('display', 'block');
     $('#mask').css('opacity', '.1');
-    var selected = app.state.selectedFeature.properties.ISO_Codes;
+    var selected = app.state.selectedFeature.properties.iso;
     var params = inputs.getInputValues();
     var df;
     $.each(app.state.features, function(idx, feature) {
         var props = feature.properties;
-        if (props.ISO_Codes == selected) {
+        if (props.iso == selected) {
             df = props;
         }
     });
@@ -298,11 +303,11 @@ $(document).on('featureselect', function(event) {
 });
 
 // handle feature selection events on output plot
-$(document).on('plotselect', function(event){
+$(document).on('plotselect', function(event) {
     var f = event.feature;
-    $.each(app.state.features, function(idx, feature){
+    $.each(app.state.features, function(idx, feature) {
         var props = feature.properties;
-        if (f.ISO == props.ISO_Codes){
+        if (f.iso == props.iso) {
             app.state.selectedFeature = feature;
             inputs.featureselect(feature);
             map.featureselect(feature);
@@ -311,7 +316,7 @@ $(document).on('plotselect', function(event){
 });
 
 // handle output map switch events
-$(document).on('mapselect', function(event){
+$(document).on('mapselect', function(event) {
     app.state.selectedOutput = event.config;
     map.config = app.state.selectedOutput;
     plots.mapselect(event.config);
@@ -319,12 +324,12 @@ $(document).on('mapselect', function(event){
 });
 
 // handle input slider changed events
-$(document).on('inputchanged', function(event){
+$(document).on('inputchanged', function(event) {
     plots.inputchanged(event.input, app.state.selectedFeature);
 });
 
 // handle runmodel events
-$(document).on('runmodel', function(event){
+$(document).on('runmodel', function(event) {
     app.updateUI(event.modelData);
 });
 

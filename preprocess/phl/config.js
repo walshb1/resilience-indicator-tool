@@ -4,16 +4,16 @@
 config = {
     "inputs": {
         // model input data
-        "data": "phl/df_with_results_phl.csv",
+        "data": "phl/df_phl_iso.csv",
 
     },
+    // model outputs
+    "outputs": ['risk', 'resilience', 'risk_to_assets'],
     "layers": {
         // shapefile layers to convert to topojson
-        "model_features":{
+        "model_features": {
             // layer name in topojson
-            "layer_name": "provinces",
-            // topojson filename
-            "output_topojson": "philippines.topojson",
+            "layer_name": "model_features",
             // input shapefile name - relative to index.js
             "shape_file": "phl/shp/PHL_adm1.shp",
             // fields to preserve from input to output
@@ -28,20 +28,14 @@ config = {
         // ploygon simplification tolerance
         "simplify_poly": "20%",
         // line simplification tolerance
-        "simplify_line": "20%"
-    },
-    "outputs": {
-        // topojson output file
-        "topojson_out": "philippines.topojson",
+        "simplify_line": "20%",
+        // svg/topojson width and height
+        "width": 500,
+        "height": 530,
+        "margin": 15,
+        "projection": 'd3.geo.equirectangular()'
     },
     "svg": {
-        // svg width and height
-        "width": 250,
-        "height": 125,
-        // field used to generate chloropleth
-        "chloropleth_field": "resilience",
-        // field holding chloropleth color bands
-        "chloropleth_color": "risk_to_assets_color",
         // svg styles
         "styles": {
             "nodata": {
@@ -49,7 +43,8 @@ config = {
             },
         }
     },
-
+    // the topojson output filename
+    "topojson_out": "map_data.topojson"
 }
 
 module.exports = config;

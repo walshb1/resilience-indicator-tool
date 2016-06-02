@@ -24,10 +24,10 @@ router.post('/runmodel', function(req, res) {
     });
 });
 
-// gets the world topojson
-router.get('/world.json', function(req, res) {
+// gets the map features as topojson
+router.get('/features.json', function(req, res) {
     res.setHeader("content-type", "application/json");
-    fs.createReadStream("sample/world.topojson").pipe(res);
+    fs.createReadStream("maps/map_data.topojson").pipe(res);
 });
 
 // gets the inputs info data
@@ -36,6 +36,12 @@ router.get('/inputs.json', function(req, res) {
     fs.createReadStream('model/inputs_info.csv')
         .pipe(csv2json({}))
         .pipe(res);
-})
+});
+
+// gets the application configuration
+router.get('/config.json', function(req, res) {
+    res.setHeader("content-type", "application/json");
+    fs.createReadStream("conf/config.js").pipe(res);
+});
 
 module.exports = router;

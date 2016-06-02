@@ -28,8 +28,8 @@ plots.output = function(config) {
         var props = feature.properties;
         if (props['gdp_pc_pp']) {
             var obj = {};
-            obj['country'] = props['Names'];
-            obj['ISO'] = props['ISO_Codes']
+            obj['name'] = props['NAME_1'];
+            obj['iso'] = props['iso']
             obj['gdp_pc_pp'] = props['gdp_pc_pp'];
             obj[config.chloropleth_field] = props[config.chloropleth_field];
             obj['pop'] = props['pop'];
@@ -104,10 +104,10 @@ plots.output = function(config) {
         .data(domain)
         .enter().append("circle")
         .attr("class", function(d) {
-            return "dot " + d.ISO;
+            return "dot " + d.iso;
         })
         .attr("r", function(d) {
-            return Math.floor(Math.log(d.pop / 1000000)) * 3;
+            return Math.floor(Math.log(d.pop));
         })
         .attr("cx", function(d) {
             return x(d.gdp_pc_pp);
@@ -121,7 +121,7 @@ plots.output = function(config) {
         })
         .on('mousedown', function(d) {
             // don't select countries with no data
-            if (!d.country) {
+            if (!d.iso) {
                 return;
             }
             // clear selection before re-selecting
@@ -129,7 +129,7 @@ plots.output = function(config) {
                 .classed('featureselect', false);
 
             // select the feature
-            var iso = d.ISO;
+            var iso = d.iso;
             svg.selectAll('circle.' + iso)
                 .classed('featureselect', true);
 
@@ -141,11 +141,11 @@ plots.output = function(config) {
         })
         .append("title")
         .text(function(d) {
-            return d.country + ": " + d.pop / 1000000;
+            return d.name + ", Pop:" + d.pop;
         });
 
     if (!selected.empty()) {
-        var sel = d3.select('.dot.' + selected.datum().ISO);
+        var sel = d3.select('.dot.' + selected.datum().iso);
         sel.attr("class", "featureselect");
     }
 }
@@ -167,11 +167,11 @@ plots.input = function(input, selectedFeature) {
         var props = feature.properties;
         if (props['gdp_pc_pp']) {
             var obj = {};
-            obj['country'] = props['Names'];
-            obj['ISO'] = props['ISO_Codes']
+            obj['name'] = props['NAME_1'];
+            obj['iso'] = props['iso']
             obj['gdp_pc_pp'] = props['gdp_pc_pp'];
             if (selectedFeature){
-                if (props.ISO_Codes == selectedFeature.properties.ISO_Codes){
+                if (props.iso == selectedFeature.properties.iso){
                     var extent = +input.brush.extent()[1].toFixed(5);
                     console.log(extent);
                     obj[input.key] = extent;
@@ -255,10 +255,10 @@ plots.input = function(input, selectedFeature) {
         .data(domain)
         .enter().append("circle")
         .attr("class", function(d) {
-            return "dot " + d.ISO;
+            return "dot " + d.iso;
         })
         .attr("r", function(d) {
-            return Math.floor(Math.log(d.pop / 1000000)) * 3;
+            return Math.floor(Math.log(d.pop));
         })
         .attr("cx", function(d) {
             return x(d.gdp_pc_pp);
@@ -290,7 +290,7 @@ plots.input = function(input, selectedFeature) {
         */
         .append("title")
         .text(function(d) {
-            return d.country + ": " + Math.floor(d.pop / 1000000);
+            return d.name + ", Pop: " + Math.floor(d.pop);
         });
 
     /*

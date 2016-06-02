@@ -62,7 +62,7 @@ styles.computeStyles = function(colorScale) {
     var svg = d3.select("#map");
 
     // countries
-    svg.selectAll(".country")
+    svg.selectAll(".feature")
         .style("fill", function(d) {
             // map resilience output by default
             var color = styles.chloropleth(d, colorScale);
