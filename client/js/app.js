@@ -88,7 +88,6 @@ _populateOutputDomains = function() {
 
 // Collects input objects to render input sliders
 _populateInputDomains = function(data) {
-    // TODO set from configuration
     var params = app.state.config.inputs;
     var inputDomains = [];
     $.each(data, function(i, val) {

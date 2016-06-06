@@ -37,7 +37,7 @@ footer {
 /* count indicator near icons */
 .nav>li .count {
   position: absolute;
-  bottom: 12px;
+i bottom: 12px;
   right: 6px;
   font-size: 9px;
   background: rgba(51,200,51,0.55);
@@ -217,7 +217,7 @@ svg {
     font: 10 px sans-serif;
 }
 
-.selecting .bar.selected  rect {
+.selecting rect {
     fill: orange;
 }
 
@@ -297,7 +297,7 @@ g.featureselect text {
 /* gaussian */
 g.gaussian path {
   stroke: #000;
-  stroke-width: .2px;
+  stroke-width: 2px;
   fill: none;
 }
 

@@ -75,7 +75,7 @@ function generateTopojson(config) {
 }
 
 /*
- * Generate visualization artifacts
+ * Generate visualization artefacts
  * and copy to viz folders:
  * map_data.topojson goes to ../maps for the /features.json api.
  * *_thubm.png goes to ../public/images/ for map switcher.
