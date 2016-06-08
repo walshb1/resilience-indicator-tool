@@ -22,7 +22,7 @@ var argv = require('yargs')
         type: 'boolean'
     })
     .option('clean', {
-        describe: 'Remove all generated files',
+        describe: 'Remove all generated files from the current directory',
         type: 'boolean'
     })
     .option('web', {
@@ -33,6 +33,11 @@ var argv = require('yargs')
         describe: 'Generate a topojson file',
         type: 'boolean'
     })
+    .option('merge-model', {
+        alias: 'm',
+        describe: 'Merge map and model data into single topojson file',
+        type: 'boolean'
+    })
     .help('help')
     .argv;
 
@@ -40,7 +45,7 @@ var config,
     topojson_out;
 
 // remove all generated artifacts
-function clean() {
+function _clean() {
     var d = Q.defer();
     glob('*(*.topojson|*.svg|*.png)', function(err, files) {
         if (err) return console.log(err);
@@ -56,8 +61,8 @@ function clean() {
 }
 
 // generate svg's only
-function generateSvg(config) {
-    topojson.model_features(config)
+function _generateSvg(config) {
+    _generateTopojson(config)
         .then(function(files) {
             svg.svg(files.model_features, config)
                 .then(function(svgs) {
@@ -69,9 +74,25 @@ function generateSvg(config) {
         });
 }
 
-// generate topojson only
-function generateTopojson(config) {
-    topojson.model_features(config);
+/*
+ * Generate topojson.
+ * Checks if model data should be merged
+ */
+function _generateTopojson(config) {
+    var d = Q.defer();
+    // check for merge-model
+    if (argv.m) {
+        topojson.model_features(config)
+            .then(function(files) {
+                d.resolve(files);
+            })
+    } else {
+        topojson.plain_features(config)
+            .then(function(files) {
+                d.resolve(files);
+            });
+    }
+    return d.promise;
 }
 
 /*
@@ -80,8 +101,8 @@ function generateTopojson(config) {
  * map_data.topojson goes to ../maps for the /features.json api.
  * *_thubm.png goes to ../public/images/ for map switcher.
  */
-function generateWeb(config) {
-    topojson.model_features(config)
+function _generateWeb(config) {
+    _generateTopojson(config)
         .then(function(files) {
             // not generating svg so copy output to maps folder
             fs.copy(path.resolve(__dirname, files.model_features), path.resolve(__dirname, '..', 'maps', files.model_features), {
@@ -94,12 +115,12 @@ function generateWeb(config) {
                 .then(function(svgs) {
                     // generate pngs
                     var pngs = png.convert(config, svgs);
-                    for (var f in pngs){
+                    for (var f in pngs) {
                         var img = pngs[f];
                         fs.copySync(img, '../public/images/' + img);
                         console.log("Copied " + img + " to '../public/images/" + img + "'");
                     }
-            });
+                });
         });
 }
 
@@ -108,17 +129,17 @@ if (argv.config) {
     var conf = argv.c.split('.')[0]
     config = require('./' + conf);
     if (argv.topojson) {
-        generateTopojson(config);
+        _generateTopojson(config);
     }
     if (argv.svg) {
-        generateSvg(config);
+        _generateSvg(config);
     }
     if (argv.web) {
-        generateWeb(config);
+        _generateWeb(config);
     }
 }
 
 // remove artifacts
 if (argv.clean) {
-    clean();
+    _clean();
 }

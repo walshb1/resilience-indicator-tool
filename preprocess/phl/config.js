@@ -15,13 +15,15 @@ config = {
             // layer name in topojson
             "layer_name": "model_features",
             // input shapefile name - relative to index.js
-            "shape_file": "phl/shp/PHL_adm1.shp",
+            "shape_file": "phl/shp/PHL_ADM_1_ISO.shp",
             // fields to preserve from input to output
-            "filter_fields": "NAME_1",
+            "filter_fields": "NAME_1,ne_10m_adm",
+            // rename input fields in output topojson
+            "rename_fields": "iso=ne_10m_adm",
             // join field on input data
-            "data_join_field": "province",
+            "data_join_field": "iso",
             // join field on shpapefile
-            "shp_join_field": "NAME_1",
+            "shp_join_field": "ne_10m_adm",
         }
     },
     "map": {

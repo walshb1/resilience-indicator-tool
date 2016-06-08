@@ -93,10 +93,13 @@ generate.svg = function(file, config) {
             modelFeatures.selectAll(".feature")
                 .data(model_features)
                 .enter().append("path")
+                .attr("id", function(d){
+                    return d.properties.iso;
+                })
                 .attr("class", function(d) {
-                    var cls = d.properties.iso == null ? 'nodata' : 'data';
-                    var iso = d.properties.iso;
-                    return sprintf("feature %s %s", cls, iso);
+                    // TODO needs to be generalized
+                    var cls = d.properties.province == null ? 'nodata' : 'data';
+                    return sprintf("feature %s", cls);
                 })
                 .style("fill", function(d) {
                     //if output value exists, assign it a color

@@ -7,6 +7,9 @@ var mapshaper = require('mapshaper'),
 
 var generate = {};
 
+/*
+ * Generate topojson with merged model data.
+ */
 generate.model_features = function(config) {
     var width = config.map.width;
     var height = config.map.height;
@@ -15,7 +18,7 @@ generate.model_features = function(config) {
 
     // model features topojson command
     var layerConfig = config.layers['model_features'];
-    var msCmd = sprintf('-i name=%(layer_name)s %(shape_file)s auto-snap -simplify %(simplify)s -filter-fields %(filter_fields)s -join %(data)s  keys=%(shp_join_field)s:str,%(data_join_field)s:str -o force temp.topojson', {
+    var msCmd = sprintf('-i name=%(layer_name)s %(shape_file)s auto-snap -simplify %(simplify)s -filter-fields %(filter_fields)s -join %(data)s  keys=%(shp_join_field)s:str,%(data_join_field)s:str -rename-fields %(rename_fields)s -o force temp.topojson', {
         layer_name: layerConfig.layer_name,
         shape_file: layerConfig.shape_file,
         simplify: config.map.simplify_poly,
@@ -23,6 +26,48 @@ generate.model_features = function(config) {
         data: config.inputs.data,
         shp_join_field: layerConfig.shp_join_field,
         data_join_field: layerConfig.data_join_field,
+        rename_fields: layerConfig.rename_fields
+    });
+    var d = Q.defer();
+    mapshaper.runCommands(msCmd, function() {
+        var topoCmd = sprintf("topojson -p --width %(width)s --height %(height)s --margin %(margin)s --projection '%(projection)s' -o map_data.topojson temp.topojson", {
+            width: width,
+            height: height,
+            margin: margin,
+            projection: projection
+        });
+        exec(topoCmd, function(err, stdout, stderr) {
+            if (err) return console.log(err);
+            // remove temporary file
+            var file = path.resolve(__dirname, './temp.topojson');
+            fs.removeSync(file, function(err) {
+                if (err) return console.log(err);
+            });
+            d.resolve({
+                'model_features': 'map_data.topojson'
+            });
+        });
+    });
+    return d.promise;
+}
+
+/*
+ *  Generate topojson without merging model data.
+ */
+generate.plain_features = function(config) {
+    var width = config.map.width;
+    var height = config.map.height;
+    var margin = config.map.margin;
+    var projection = config.map.projection;
+
+    // model features topojson command
+    var layerConfig = config.layers['model_features'];
+    var msCmd = sprintf('-i name=%(layer_name)s %(shape_file)s auto-snap -simplify %(simplify)s -filter-fields %(filter_fields)s -rename-fields %(rename_fields)s -o force temp.topojson', {
+        layer_name: layerConfig.layer_name,
+        shape_file: layerConfig.shape_file,
+        simplify: config.map.simplify_poly,
+        filter_fields: layerConfig.filter_fields,
+        rename_fields: layerConfig.rename_fields
     });
     var d = Q.defer();
     mapshaper.runCommands(msCmd, function() {
