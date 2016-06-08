@@ -96,6 +96,8 @@ _populateInputDomains = function(data) {
             obj.key = val.key;
             obj.descriptor = val.descriptor;
             obj.distribution = [];
+            obj.lower = +val.lower;
+            obj.upper = +val.upper;
             $.each(app.state.features, function(j, feature) {
                 var props = feature.properties;
                 if (props[val.key]) {

@@ -119,6 +119,7 @@ plots.output = function(config) {
             //return color(d.pop);
             return "steelblue";
         })
+        .style("opacity", '.5')
         .on('mousedown', function(d) {
             // don't select countries with no data
             if (!d.iso) {
@@ -323,7 +324,7 @@ plots.input = function(input, selectedFeature) {
 // handle feature selection
 plots.featureselect = function(feature) {
     // update output plot
-    var iso = feature.properties.ISO_Codes;
+    var iso = feature.properties.iso;
     var svg = d3.select('#output-plot');
     svg.selectAll('circle')
         .classed('featureselect', false);

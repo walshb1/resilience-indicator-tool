@@ -13,32 +13,33 @@ inputs.getSliders = function(inputConfig) {
     // clear inputs before redrawing
     $('#inputs').empty();
     $.each(inputConfig, function(idx, input) {
-        var data = input.distribution.sort(function(a, b){
-            return a -b;
+
+        // sort the distribution
+        var data = input.distribution.sort(function(a, b) {
+            return a - b;
         });
 
         console.log(input.descriptor, data);
 
-        // A formatter for counts.
-        var formatCount = d3.format(".0f");
         var margin = {
                 top: 5,
                 right: 0,
                 bottom: 0,
                 left: 0
             },
-            width = 150 - margin.left - margin.right,
-            height = 40 - margin.top - margin.bottom;
+            width = 120 - margin.left - margin.right,
+            height = 30 - margin.top - margin.bottom;
 
         var kde = science.stats.kde().sample(data);
 
         var bw = kde.bandwidth(science.stats.bandwidth.nrd0)(data);
 
+        // var ext = input.upper > 0 ? [input.lower, input.upper] : d3.extent(data);
+
         var x = d3.scale.linear()
             .domain(d3.extent(data))
             .range([0, width])
-            .nice();
-
+            .clamp(true);
 
         var y = d3.scale.linear()
             .domain([0, d3.max(bw, function(d) {
@@ -46,7 +47,7 @@ inputs.getSliders = function(inputConfig) {
             })])
             .range([height, 0]);
 
-        // gaussian distribution line
+        // gaussian curve
         var l = d3.svg.line()
             .x(function(d) {
                 return x(d[0]);
@@ -55,8 +56,9 @@ inputs.getSliders = function(inputConfig) {
                 return y(d[1]);
             });
 
-        // area under gaussian distribution
+        // area under gaussian curve
         var a = d3.svg.area()
+            .interpolate('basis')
             .x(function(d) {
                 return x(d[0]);
             })
@@ -112,6 +114,10 @@ inputs.getSliders = function(inputConfig) {
                 return a(kde.bandwidth(d)(data));
             });
 
+        var mask = svg.append("g")
+            .attr("id", 'mask-' + input.key)
+            .attr("class", "mask");
+
         var brush = d3.svg.brush()
             .x(x)
             .extent([0, d3.mean(data)])
@@ -143,8 +149,8 @@ inputs.getSliders = function(inputConfig) {
             .call(brush.extent([0, d3.mean(data)]))
             .call(brush.event);
 
-        brushg.selectAll("b.brush .resize.w")
-            .remove();
+
+        brushg.selectAll("g.resize.w").remove();
 
         brushg.select("#" + input.key + " g.resize.e").append("path")
             .attr("d", line);
@@ -157,15 +163,11 @@ inputs.getSliders = function(inputConfig) {
         }
 
         function brushmove() {
-            // remove existing mask
-            svg.selectAll('g.mask').remove();
-            // add brush selection mask
-            var mask = svg.append("g")
-                .attr("id", 'mask-' + input.key)
-                .attr("class", "mask");
+            // clear existing mask
+            $('#mask-' + input.key).empty();
             var s = brush.extent();
             var clip = b(data, s[1]);
-            var selected = data.slice(0, clip);
+            var selected = data.slice(0, clip + 1);
             mask.selectAll("g#mask-" + input.key + " .mask")
                 .data([science.stats.bandwidth.nrd0])
                 .enter()
@@ -173,9 +175,6 @@ inputs.getSliders = function(inputConfig) {
                 .attr("d", function(d) {
                     return a(kde.bandwidth(d)(selected));
                 });
-
-            // update brush extent
-            brush.extent([0, s[1]]);
             d3.select("#" + input.key + " g.resize.e path")
                 .attr("d", 'M 0, 0 ' + ' L 0 ' + height);
         }
@@ -235,6 +234,8 @@ inputs.update = function(props) {
                     .call(brush.event);
             }
         }
+        // remove w resize extent handle
+        d3.selectAll("g.brush > g.resize.w").remove();
     }
 }
 

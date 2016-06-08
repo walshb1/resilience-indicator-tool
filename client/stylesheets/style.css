@@ -286,6 +286,7 @@ circle.featureselect {
     stroke: #000 !important;
     stroke-width: 2px !important;
     margin: 1em !important;
+    opacity: 1 !important;
 }
 
 g.featureselect text {
@@ -299,6 +300,7 @@ g.gaussian path {
   stroke: #000;
   stroke-width: 2px;
   fill: none;
+  shape-rendering: auto;
 }
 
 g.area path {
