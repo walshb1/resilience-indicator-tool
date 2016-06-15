@@ -57,7 +57,7 @@ styles.applyDefaults = function() {
         .style('stroke-linejoin', 'miter');
 }
 
-styles.computeStyles = function(colorScale) {
+styles.computeStyles = function(colorScale, model_data) {
 
     var svg = d3.select("#map");
 
@@ -65,8 +65,12 @@ styles.computeStyles = function(colorScale) {
     svg.selectAll(".feature")
         .style("fill", function(d) {
             // map resilience output by default
-            var color = styles.chloropleth(d, colorScale);
-            return color;
+            var model = model_data[d.properties.iso];
+            if(model){
+                var value = model.resilience;
+                var color = styles.chloropleth(colorScale, value);
+                return color;
+            }
         });
 }
 
@@ -88,9 +92,7 @@ styles.colorScale = function(domain, data) {
     return colors; //return the color scale generator
 };
 
-styles.chloropleth = function choropleth(d, computeStyles) {
-    //get data value
-    var value = d.properties['resilience'];
+styles.chloropleth = function choropleth(computeStyles, value) {
     //if value exists, assign it a color; otherwise assign gray
     if (value) {
         return computeStyles(value);

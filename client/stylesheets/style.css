@@ -1,6 +1,7 @@
 body {
   height: 100%;
   width: 100%;
+  font-family: 'Lato';
 }
 
 hr {
@@ -258,13 +259,16 @@ g.tick > text {
     shape-rendering: crispEdges;
 }
 
-.bar rect {
-    fill: steelblue;
-    shape-rendering: crispEdges;
+.table {
+    margin-bottom: .2em !important;
 }
 
-.bar text {
-    fill: #fff;
+span.value {
+    width: 5em;
+}
+
+span.descriptor {
+    font-weight: 500;
 }
 
 .axis path,
@@ -313,6 +317,5 @@ g.mask path {
 }
 
 button#runmodel {
-    float: right;
     margin-top: 2em;
 }

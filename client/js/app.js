@@ -15,18 +15,19 @@ app.state = {};
 // loads the initial data and populates application state
 _loadInitialData = function() {
     var d = Q.defer();
-    Q.all([_loadMapData(), _loadInputData(), _loadConfig()])
+    Q.all([_loadMapData(), _loadInputData(), _loadConfig(), _loadModelData()])
         .then(function(results) {
             app.state.config = results[2];
             app.state.layers = results[0];
             app.state.features = _getModelFeatures(results[0]);
+            app.state.model = _getModelData(results[3]);
             app.state.outputDomains = _populateOutputDomains();
             app.state.inputInfo = results[1];
             app.state.inputDomains = _populateInputDomains(results[1]);
             app.state.selectedFeature = app.state.features[0];
             d.resolve();
         });
-        return d.promise;
+    return d.promise;
 }
 
 // load the map data
@@ -47,6 +48,15 @@ _loadInputData = function() {
     return d.promise;
 }
 
+// loads the initial model data
+_loadModelData = function() {
+    var d = Q.defer();
+    $.getJSON('modeldata.json', function(data) {
+        d.resolve(data);
+    });
+    return d.promise;
+}
+
 // load the application configuration
 _loadConfig = function() {
     var d = Q.defer();
@@ -61,6 +71,17 @@ _getModelFeatures = function(data) {
     return topojson.feature(data, data.objects.model_features).features;
 }
 
+// returns a map of iso codes to model data entry
+_getModelData = function(data) {
+    var model = {};
+    $.each(data, function(idx, model_data) {
+        if (model_data.hasOwnProperty('iso')) {
+            model[model_data.iso] = model_data;
+        }
+    });
+    return model;
+}
+
 // Collects values for each of the output domains.
 _populateOutputDomains = function() {
     var outputDomains = {
@@ -68,11 +89,11 @@ _populateOutputDomains = function() {
         'risk': [],
         'risk_to_assets': [],
     }
-    $.each(app.state.features, function(idx, feature) {
+    $.each(app.state.model, function(idx, data) {
         // TODO do these need to be configurable?
-        var res = feature.properties['resilience'];
-        var wel = feature.properties['risk'];
-        var assets = feature.properties['risk_to_assets'];
+        var res = data['resilience'];
+        var wel = data['risk'];
+        var assets = data['risk_to_assets'];
         if (res) {
             outputDomains['resilience'].push(res);
         }
@@ -98,10 +119,10 @@ _populateInputDomains = function(data) {
             obj.distribution = [];
             obj.lower = +val.lower;
             obj.upper = +val.upper;
-            $.each(app.state.features, function(j, feature) {
-                var props = feature.properties;
-                if (props[val.key]) {
-                    obj.distribution.push(props[val.key]);
+            obj.number_type = val.number_type;
+            $.each(app.state.model, function(j, m) {
+                if (m[val.key]) {
+                    obj.distribution.push(+m[val.key]);
                 }
             })
             inputDomains.push(obj);
@@ -119,11 +140,11 @@ _createInputSliders = function(data) {
 
 // generate the scatter plots
 _createScatterPlots = function() {
-    var features = app.state.features;
     var defaultInput = app.state.config.default_input;
     var input = inputs.getConfig()[defaultInput];
     var config = _renderConfig();
-    plots.features = features;
+    // set the model on the plots for rendering
+    plots.model = app.state.model;
     plots.output(config);
     plots.input(input);
 }
@@ -132,10 +153,10 @@ _createScatterPlots = function() {
 _drawMap = function() {
     // resilience selected by default
     var config = _renderConfig();
-    map.draw(config, app.state.layers)
+    map.draw(config, app.state.layers, app.state.model)
         .then(function() {
             $('#title').html(config.chloropleth_title);
-            styles.computeStyles(config.colorScale);
+            styles.computeStyles(config.colorScale, app.state.model);
             styles.applyDefaults();
             $.event.trigger({
                 type: 'mapselect',
@@ -190,7 +211,7 @@ app.init = function() {
         $('#' + smMapId + ' img').addClass('active');
         // update the map config
         var config = _renderConfig(e);
-        styles.computeStyles(config.colorScale);
+        styles.computeStyles(config.colorScale, app.state.model);
         $('#title').html(config.chloropleth_title);
         $.event.trigger({
             type: 'mapselect',
@@ -297,21 +318,25 @@ $(document).ready(function() {
 // handle featureselection events on map
 $(document).on('featureselect', function(event) {
     var feature = event.feature;
+    var model = app.state.model[feature.properties.iso];
     app.state.selectedFeature = feature;
-    inputs.featureselect(feature);
-    plots.featureselect(feature);
-    map.featureselect(feature);
+    inputs.featureselect(feature, model);
+    plots.featureselect(feature, model);
+    map.featureselect(feature, model);
 });
 
 // handle feature selection events on output plot
 $(document).on('plotselect', function(event) {
     var f = event.feature;
+    var source = event.source;
     $.each(app.state.features, function(idx, feature) {
         var props = feature.properties;
         if (f.iso == props.iso) {
             app.state.selectedFeature = feature;
-            inputs.featureselect(feature);
-            map.featureselect(feature);
+            var model = app.state.model[props.iso];
+            inputs.featureselect(feature, model);
+            map.featureselect(feature, model);
+            plots.plotselect(feature, model, source);
         }
     });
 });

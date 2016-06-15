@@ -11,7 +11,7 @@ var map = {};
 
 map.config = {}
 
-map.draw = function(config, json) {
+map.draw = function(config, json, model_data) {
 
     // clear the map before redrawing
     $('#map').empty();
@@ -50,7 +50,7 @@ map.draw = function(config, json) {
 
     // pull out geojson layers
     var model_features = topojson.feature(json, json.objects.model_features).features;
-    
+
     var path = d3.geo.path().projection(null);
 
     // countries
@@ -58,11 +58,20 @@ map.draw = function(config, json) {
         .data(model_features)
         .enter()
         .append("path")
+        .attr("id", function(d){
+            return d.properties.iso;
+        })
         .attr("class", function(d) {
             // check resilience by default
-            var cls = d.properties.resilience == null ? 'nodata' : 'data';
             var iso = d.properties.iso;
-            return sprintf("feature %s %s", cls, iso);
+            var model = model_data[iso];
+            if (model){
+                var cls = model.resilience == null ? 'nodata' : 'data';
+                return sprintf("feature %s %s", cls, iso);
+            }
+            else {
+                // return sprintf("feature %s", iso);
+            }
         })
         .attr("d", path)
         .on('mouseout', function(d) {
@@ -70,8 +79,9 @@ map.draw = function(config, json) {
         })
         .on('mouseover', function(d) {
             var name = d.properties.NAME_1;
+            var iso = d.properties.iso;
             if (name) {
-                var chl_field = d.properties[map.config.chloropleth_field];
+                var chl_field = model_data[iso][map.config.chloropleth_field];
                 var iso = d.properties.iso;
                 $('#data').empty();
                 $('#data').append('<span><strong>' + name + ' (' + iso + '). </strong></span>');

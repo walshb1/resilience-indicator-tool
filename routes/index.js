@@ -44,4 +44,12 @@ router.get('/config.json', function(req, res) {
     fs.createReadStream("conf/config.js").pipe(res);
 });
 
+// gets the inital model data
+router.get('/modeldata.json', function(req, res){
+    res.setHeader("content-type", "application/json");
+    fs.createReadStream('model/df_phl_iso.csv')
+        .pipe(csv2json({}))
+        .pipe(res);
+})
+
 module.exports = router;

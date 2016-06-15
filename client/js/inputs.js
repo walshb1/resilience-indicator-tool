@@ -19,7 +19,7 @@ inputs.getSliders = function(inputConfig) {
             return a - b;
         });
 
-        console.log(input.descriptor, data);
+        // console.log(input.descriptor, data);
 
         var margin = {
                 top: 5,
@@ -58,7 +58,6 @@ inputs.getSliders = function(inputConfig) {
 
         // area under gaussian curve
         var a = d3.svg.area()
-            .interpolate('basis')
             .x(function(d) {
                 return x(d[0]);
             })
@@ -75,11 +74,27 @@ inputs.getSliders = function(inputConfig) {
         var div = d3.select('#inputs')
             .append("div");
 
-        div.append('span')
+        var tr = div.append("table")
+            .attr('width', '100%')
+            .attr('class', 'table table-responsive')
+            .attr("id", "table-" + input.key)
+            .append("tr");
+
+        tr.append("td")
+            .attr('width', '45%')
+            .append('span')
             .attr("class", "descriptor")
             .text(input.descriptor);
 
-        var svg = div.append("svg")
+        tr.append("td")
+            .attr('width', '20%')
+            .append('span')
+            .attr("class", "value")
+            .text(' ');
+
+        var td = tr.append("td")
+            .attr('width', '35%');
+        var svg = td.append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .attr("id", input.key)
@@ -177,6 +192,13 @@ inputs.getSliders = function(inputConfig) {
                 });
             d3.select("#" + input.key + " g.resize.e path")
                 .attr("d", 'M 0, 0 ' + ' L 0 ' + height);
+            var span = $("#table-" + input.key + ' span.value');
+            span.empty();
+            span.html(function(){
+                var percent = input.number_type == 'percent' ? ' %' : '';
+                var ext = +input.brush.extent()[1];
+                return ext.toFixed(3) + percent;
+            });
         }
 
         function brushend() {
@@ -184,6 +206,7 @@ inputs.getSliders = function(inputConfig) {
                 // source is a MouseEvent
                 // user is updating the input manually
                 var node = d3.select(d3.event.sourceEvent.target).node();
+                console.log(node);
                 /* TODO: make sure we get reference to svg on brushend
                 if (node.name != 'svg'){
                     node = node.parentElement;
@@ -218,14 +241,15 @@ inputs.redrawInputPlot = function(key) {
  * Update input extents when feature selected
  * on either map or output plot
  */
-inputs.update = function(props) {
+inputs.update = function(model) {
     var config = inputs.getConfig();
     for (var conf in config) {
         if (config.hasOwnProperty(conf)) {
             // get the input config
             var input = config[conf];
             var brush = input.brush;
-            var extent = props[conf];
+            // get the value of the current input from the model
+            var extent = model[conf];
             var brushg = d3.selectAll('#inputs svg#' + conf + ' g.brush');
             if (!brush.empty()) {
                 brushg.transition()
@@ -262,11 +286,11 @@ inputs.getInputValues = function() {
 /*
  * Handle feature selection events.
  */
-inputs.featureselect = function(feature) {
+inputs.featureselect = function(feature, model) {
     var props = feature.properties;
     var iso = props.iso;
-    $('span#selected-country').html(props.NAME_1);
-    inputs.update(props);
+    $('span#selected-feature').html(props.NAME_1);
+    inputs.update(model);
 }
 
 module.exports = inputs;

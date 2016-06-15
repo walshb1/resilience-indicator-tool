@@ -24,15 +24,15 @@ plots.output = function(config) {
         height = 350 - margin.top - margin.bottom;
 
     var domain = [];
-    $.each(plots.features, function(idx, feature) {
-        var props = feature.properties;
-        if (props['gdp_pc_pp']) {
+    $.each(plots.model, function(idx, data) {
+        if (data['gdp_pc_pp']) {
             var obj = {};
-            obj['name'] = props['NAME_1'];
-            obj['iso'] = props['iso']
-            obj['gdp_pc_pp'] = props['gdp_pc_pp'];
-            obj[config.chloropleth_field] = props[config.chloropleth_field];
-            obj['pop'] = props['pop'];
+            // TODO rename this field in preprocess config
+            obj['name'] = data['province'];
+            obj['iso'] = data['iso']
+            obj['gdp_pc_pp'] = data['gdp_pc_pp'];
+            obj[config.chloropleth_field] = data[config.chloropleth_field];
+            obj['pop'] = data['pop'];
             domain.push(obj);
         }
     });
@@ -126,17 +126,18 @@ plots.output = function(config) {
                 return;
             }
             // clear selection before re-selecting
-            svg.selectAll('.dot')
+            svg.selectAll('circle.dot')
                 .classed('featureselect', false);
 
             // select the feature
             var iso = d.iso;
-            svg.selectAll('circle.' + iso)
+            svg.selectAll('circle.dot.' + iso)
                 .classed('featureselect', true);
 
             // notify event listeners
             $.event.trigger({
                 type: 'plotselect',
+                source: 'output-plot',
                 feature: d
             })
         })
@@ -164,27 +165,26 @@ plots.input = function(input, selectedFeature) {
         height = 350 - margin.top - margin.bottom;
 
     var domain = [];
-    $.each(plots.features, function(idx, feature) {
-        var props = feature.properties;
-        if (props['gdp_pc_pp']) {
+    $.each(plots.model, function(idx, data) {
+        if (data['gdp_pc_pp']) {
             var obj = {};
-            obj['name'] = props['NAME_1'];
-            obj['iso'] = props['iso']
-            obj['gdp_pc_pp'] = props['gdp_pc_pp'];
+            obj['name'] = data['province'];
+            obj['iso'] = data['iso']
+            obj['gdp_pc_pp'] = data['gdp_pc_pp'];
             if (selectedFeature){
-                if (props.iso == selectedFeature.properties.iso){
+                if (data.iso == selectedFeature.properties.iso){
                     var extent = +input.brush.extent()[1].toFixed(5);
                     console.log(extent);
                     obj[input.key] = extent;
                 }
                 else {
-                    obj[input.key] = props[input.key];
+                    obj[input.key] = data[input.key];
                 }
             }
             else {
-                obj[input.key] = props[input.key]; // TODO make this dynamic
+                obj[input.key] = data[input.key]; // TODO make this dynamic
             }
-            obj['pop'] = props['pop'];
+            obj['pop'] = data['pop'];
             domain.push(obj);
         }
     });
@@ -272,23 +272,27 @@ plots.input = function(input, selectedFeature) {
             return "steelblue";
         })
         .style("opacity", '.5')
-        /*
-        // TODO handle feature selections on input plot
         .on('mousedown', function(d) {
             // don't select countries with no data
-            if (!d.country) {
+            if (!d.iso) {
                 return;
             }
             // clear selection before re-selecting
-            svg.selectAll('.dot')
+            svg.selectAll('circle.dot')
                 .classed('featureselect', false);
 
             // select the feature
-            svg.selectAll('circle.' + d.ISO)
+            var iso = d.iso;
+            svg.selectAll('circle.dot.' + iso)
                 .classed('featureselect', true);
 
+            // notify event listeners
+            $.event.trigger({
+                type: 'plotselect',
+                source: 'input-plot',
+                feature: d
+            })
         })
-        */
         .append("title")
         .text(function(d) {
             return d.name + ", Pop: " + Math.floor(d.pop);
@@ -349,7 +353,7 @@ plots.mapselect = function(map_config) {
 // redraw the input scatterplot when an input is changed by the user
 plots.inputchanged = function(input, selectedFeature){
     // redraw the plot based on the current input
-    var iso = selectedFeature.properties.ISO_Codes;
+    var iso = selectedFeature.properties.iso;
     var title = input.descriptor;
     $('#input-bubble-title').html(title);
     plots.input(input, selectedFeature);
@@ -358,6 +362,21 @@ plots.inputchanged = function(input, selectedFeature){
         .classed('featureselect', false);
     svg.selectAll('.' + iso)
         .classed('featureselect', true);
+}
+
+// handle selection events on either of the plots
+plots.plotselect = function(feature, model, source){
+    var update = source == 'output-plot' ? 'input-plot' : 'output-plot';
+    // get currently selected bubble if any
+    var selected = d3.select('#' + update + ' circle.featureselect');
+    selected.classed('featureselect', false);
+    // select the newly selected feature
+    var sel = d3.select('#' + update + ' circle.dot.' + model.iso);
+    sel.attr("class", "dot " + model.iso + " featureselect");
+    // if (!selected.empty()) {
+    //     var sel = d3.select('#' + update + ' circle.dot.' + model.iso);
+    //     sel.attr("class", "featureselect");
+    // }
 }
 
 module.exports = plots;
