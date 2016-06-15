@@ -336,8 +336,6 @@ plots.featureselect = function(feature) {
         .classed('featureselect', true);
 
     // update input plot and select current feature
-    // var input = inputs.getConfig()['pv']; // TODO configuration
-    // plots.input(input);
     var svg = d3.select('#input-plot');
     svg.selectAll('circle')
         .classed('featureselect', false);
@@ -373,10 +371,6 @@ plots.plotselect = function(feature, model, source){
     // select the newly selected feature
     var sel = d3.select('#' + update + ' circle.dot.' + model.iso);
     sel.attr("class", "dot " + model.iso + " featureselect");
-    // if (!selected.empty()) {
-    //     var sel = d3.select('#' + update + ' circle.dot.' + model.iso);
-    //     sel.attr("class", "featureselect");
-    // }
 }
 
 module.exports = plots;

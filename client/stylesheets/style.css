@@ -1,57 +1,50 @@
 body {
-  height: 100%;
-  width: 100%;
-  font-family: 'Lato';
+    height: 100%;
+    width: 100%;
+    font-family: 'Lato';
 }
-
 hr {
-  margin: 0px !important;
+    margin: 0px !important;
 }
-
 .navbar-inverse {
     background-color: #337ab7;
 }
-
 .navbar-brand {
     color: white !important;
 }
-
 .navbar-static-top {
-  margin-bottom:20px;
+    margin-bottom: 20px;
 }
-
 i {
-  font-size:16px;
+    font-size: 16px;
 }
-
-.nav > li > a {
-  color:#787878;
+.nav> li> a {
+    color: #787878;
 }
-
 footer {
-  margin-top:20px;
-  padding-top:20px;
-  padding-bottom:20px;
-  background-color:#efefef;
+    margin-top: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #efefef;
 }
 
 /* count indicator near icons */
-.nav>li .count {
-  position: absolute;
-i bottom: 12px;
-  right: 6px;
-  font-size: 9px;
-  background: rgba(51,200,51,0.55);
-  color: rgba(255,255,255,0.9);
-  line-height: 1em;
-  padding: 2px 4px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-  border-radius: 10px;
-}
 
+.nav>li .count {
+    position: absolute;
+    i bottom: 12px;
+    right: 6px;
+    font-size: 9px;
+    background: rgba(51, 200, 51, 0.55);
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1em;
+    padding: 2px 4px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px;
+}
 #spinner {
     position: fixed;
     top: 50%;
@@ -59,91 +52,75 @@ i bottom: 12px;
     transform: translate(-50%, -50%);
     display: block;
 }
-
 #spinner span {
     text-align: center;
     margin: 0 -15px 15px 0;
     font-size: 2em;
 }
-
 #spinner i {
     padding: .4em;
 }
-
 #mask {
     opacity: 1;
 }
-
 div#ui {
     visibility: hidden;
 }
-
-#map{
+#map {
     width: auto;
     height: auto;
     /*box-shadow: 0 0 2px rgba(0,0,0,0.5);*/
     overflow: hidden;
     margin-top: 15px;
 }
-
-.sm-map{
+.sm-map {
     /*box-shadow: 0 0 2px rgba(0,0,0,0.5);*/
     vertical-align: middle;
     text-align: center;
     padding: 2px !important;
     margin: 15px 0px 0px -15px;
 }
-
 .output {
     font-weight: 500;
     padding: 5px;
 }
-
 .sm-map img {
-  padding-bottom: 2px;
+    padding-bottom: 2px;
 }
-
-.sm-map > img:hover, img.active {
+.sm-map> img:hover, img.active {
     border-bottom: 2px solid #337ab7;
 }
-
 div.active {
     display: none;
 }
-
 .coastline {
     fill: none;
     stroke: lightblue;
     stroke-width: .05;
     stroke-linejoin: miter;
 }
-
 .country {
     fill: #CCC;
     stroke: red;
     stroke-width: .001;
     stroke-linejoin: miter;
 }
-
 .intlbdie {
     fill: none;
     stroke: #666;
     stroke-width: .25;
     stroke-linejoin: miter;
 }
-
 .disputed {
     fill: #BDBCBC;
 }
-
 .tightly_dashed_line {
     fill: none;
     stroke: #666;
     stroke-width: .25;
-    stroke-dasharray: 1,.5;
+    stroke-dasharray: 1, .5;
     stroke-linejoin: miter;
 }
-
 .dotted_line {
     fill: none;
     stroke: #666;
@@ -151,7 +128,6 @@ div.active {
     stroke-dasharray: .1, .5;
     stroke-linecap: round;
 }
-
 .dashed_line {
     fill: none;
     stroke: #666;
@@ -159,21 +135,18 @@ div.active {
     stroke-dasharray: .3, .3;
     stroke-linejoin: miter;
 }
-
 #objective-map {
     width: auto;
     height: 650px;
-    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     margin: 15px;
     padding: 0px;
 }
-
 #info {
     margin: 15px;
-    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     padding: 15px;
 }
-
 #data {
     margin: .2em 0em 0em .2em;
     padding: 0;
@@ -181,28 +154,22 @@ div.active {
     position: relative;
     background: transparent;
 }
-
 .data:hover {
     fill: yellow !important;
 }
-
 #inputs {
     margin: 20px;
 }
-
 #vis-1, #vis-2 {
     min-height: 300px;
     width: auto;
-    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     margin: 15px;
-
 }
-
-#inputs > p > label {
+#inputs> p> label {
     font-size: small;
     font-weight: 550;
 }
-
 #ouput-plot svg, #input-plot svg {
     padding: 1em;
 }
@@ -213,66 +180,58 @@ span.descriptor {
     margin: .5em 1.5em 0 0;
     float: left;
 }
-
 svg {
     font: 10 px sans-serif;
 }
-
+div#inputs, #inputs div, #inputs table, #inputs path, #inputs g.brush {
+    pointer-events: none;
+}
+#inputs svg {
+    pointer-events: all;
+    /*border-bottom: 1px solid lightgrey;*/
+}
 .selecting rect {
     fill: orange;
 }
-
 .resize.e path {
     fill: #666;
     fill-opacity: .8;
     stroke: #000;
     stroke-width: 2px;
 }
-
 .resize.e {
     cursor: move !important;
     display: inline !important;
 }
-
-g.brush > rect.extent {
-    pointer-events: none;
+g.brush> rect.extent {
+    /*pointer-events: none;*/
 }
-
-g.brush > .background {
+g.brush> .background {
     cursor: default !important;
 }
-
-g.tick > text {
+g.tick> text {
     font-size: .6em !important;
 }
-
-.axis path,
-.axis line {
+.axis path, .axis line {
     fill: none;
     stroke: #000;
     stroke-width: 2px;
     shape-rendering: crispEdges;
 }
-
 .brush .extent {
     fill-opacity: 0;
     shape-rendering: crispEdges;
 }
-
 .table {
     margin-bottom: .2em !important;
 }
-
 span.value {
     width: 5em;
 }
-
 span.descriptor {
     font-weight: 500;
 }
-
-.axis path,
-.axis line {
+.axis path, .axis line {
     fill: none;
     stroke-width: 1px;
     stroke: #000;
@@ -284,7 +243,6 @@ span.descriptor {
 path.featureselect {
     fill: yellow !important;
 }
-
 circle.featureselect {
     fill: yellow !important;
     stroke: #000 !important;
@@ -292,30 +250,26 @@ circle.featureselect {
     margin: 1em !important;
     opacity: 1 !important;
 }
-
 g.featureselect text {
     stroke: #000 !important;
     stroke-width: 1px !important;
 }
 
-
 /* gaussian */
-g.gaussian path {
-  stroke: #000;
-  stroke-width: 2px;
-  fill: none;
-  shape-rendering: auto;
-}
 
+g.gaussian path {
+    stroke: #000;
+    stroke-width: 2px;
+    fill: none;
+    shape-rendering: auto;
+}
 g.area path {
     fill: #B9D908;
 }
-
 g.mask path {
     fill: #C17391;
     opacity: 1;
 }
-
 button#runmodel {
     margin-top: 2em;
 }

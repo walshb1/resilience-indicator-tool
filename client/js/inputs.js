@@ -34,8 +34,6 @@ inputs.getSliders = function(inputConfig) {
 
         var bw = kde.bandwidth(science.stats.bandwidth.nrd0)(data);
 
-        // var ext = input.upper > 0 ? [input.lower, input.upper] : d3.extent(data);
-
         var x = d3.scale.linear()
             .domain(d3.extent(data))
             .range([0, width])
@@ -194,8 +192,8 @@ inputs.getSliders = function(inputConfig) {
                 .attr("d", 'M 0, 0 ' + ' L 0 ' + height);
             var span = $("#table-" + input.key + ' span.value');
             span.empty();
-            span.html(function(){
-                var percent = input.number_type == 'percent' ? ' %' : '';
+            span.html(function() {
+                var percent = input.number_type == ('percent' || 'small_percent') ? ' %' : '';
                 var ext = +input.brush.extent()[1];
                 return ext.toFixed(3) + percent;
             });
@@ -206,19 +204,12 @@ inputs.getSliders = function(inputConfig) {
                 // source is a MouseEvent
                 // user is updating the input manually
                 var node = d3.select(d3.event.sourceEvent.target).node();
-                console.log(node);
-                /* TODO: make sure we get reference to svg on brushend
-                if (node.name != 'svg'){
-                    node = node.parentElement;
-                }
-                */
                 var id = node.id;
-                console.log('input id: ' + id);
                 // redraw the input plot
                 if (id) {
                     inputs.redrawInputPlot(id);
                 } else {
-                    console.log('Cant get input id... fix this.');
+                    console.warn('Cant get input id...');
                 }
             }
             svg.classed("selecting", !d3.event.target.empty());
@@ -249,21 +240,21 @@ inputs.update = function(model) {
             var input = config[conf];
             var brush = input.brush;
             // get the value of the current input from the model
-            var extent = model[conf];
+            // and update the brush extent
+            var extent = +model[conf];
+            brush.extent([0, extent]);
             var brushg = d3.selectAll('#inputs svg#' + conf + ' g.brush');
-            if (!brush.empty()) {
-                brushg.transition()
-                    .duration(750)
-                    .call(brush.extent([0, extent]))
-                    .call(brush.event);
-            }
+            brushg.transition()
+                .duration(750)
+                .call(brush)
+                .call(brush.event);
         }
         // remove w resize extent handle
         d3.selectAll("g.brush > g.resize.w").remove();
     }
 }
 
-inputs.getConfig = function(label = 'pv') {
+inputs.getConfig = function() {
     return _config;
 }
 

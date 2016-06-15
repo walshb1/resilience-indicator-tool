@@ -325,7 +325,7 @@ $(document).on('featureselect', function(event) {
     map.featureselect(feature, model);
 });
 
-// handle feature selection events on output plot
+// handle feature selection events on either plot
 $(document).on('plotselect', function(event) {
     var f = event.feature;
     var source = event.source;
