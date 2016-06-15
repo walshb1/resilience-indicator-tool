@@ -298,6 +298,9 @@ plots.input = function(input, selectedFeature) {
             return d.name + ", Pop: " + Math.floor(d.pop);
         });
 
+    var title = input.descriptor;
+    $('#input-bubble-title').html(title);
+
     /*
     var legend = svg.selectAll(".legend")
         .data(color.domain())
@@ -352,8 +355,6 @@ plots.mapselect = function(map_config) {
 plots.inputchanged = function(input, selectedFeature){
     // redraw the plot based on the current input
     var iso = selectedFeature.properties.iso;
-    var title = input.descriptor;
-    $('#input-bubble-title').html(title);
     plots.input(input, selectedFeature);
     var svg = d3.select('#input-plot');
     svg.selectAll('circle')

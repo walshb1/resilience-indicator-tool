@@ -146,7 +146,7 @@ _createScatterPlots = function() {
     // set the model on the plots for rendering
     plots.model = app.state.model;
     plots.output(config);
-    plots.input(input);
+    plots.input(input, app.state.selectedFeature);
 }
 
 // draw the map

@@ -19,7 +19,17 @@ inputs.getSliders = function(inputConfig) {
             return a - b;
         });
 
+        var bounds;
+        if (input.lower == 0 && input.upper == 0) {
+            bounds = d3.extent(data);
+        } else {
+            bounds = [input.lower, input.upper];
+        }
+
         // console.log(input.descriptor, data);
+
+        // TODO discuss this
+        bounds = d3.extent(data);
 
         var margin = {
                 top: 5,
@@ -35,7 +45,7 @@ inputs.getSliders = function(inputConfig) {
         var bw = kde.bandwidth(science.stats.bandwidth.nrd0)(data);
 
         var x = d3.scale.linear()
-            .domain(d3.extent(data))
+            .domain(bounds)
             .range([0, width])
             .clamp(true);
 
