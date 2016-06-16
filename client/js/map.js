@@ -75,17 +75,20 @@ map.draw = function(config, json, model_data) {
         })
         .attr("d", path)
         .on('mouseout', function(d) {
-            $('#data').empty();
+            $.event.trigger({
+                type: 'display-output-data',
+                config: map.config
+            });
         })
         .on('mouseover', function(d) {
             var name = d.properties.NAME_1;
             var iso = d.properties.iso;
             if (name) {
-                var chl_field = model_data[iso][map.config.chloropleth_field];
+                var chl_field = +model_data[iso][map.config.chloropleth_field];
                 var iso = d.properties.iso;
                 $('#data').empty();
-                $('#data').append('<span><strong>' + name + ' (' + iso + '). </strong></span>');
-                $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field + '</span>');
+                $('#data').append('<span><strong>' + name + '. </strong></span>');
+                $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
             }
         })
         .on('mousedown', function(d) {
@@ -116,7 +119,7 @@ map.draw = function(config, json, model_data) {
 }
 
 // set selected feature
-map.featureselect = function(feature) {
+map.featureselect = function(feature, model) {
     // clear selection before re-selecting
     svg.selectAll('.feature')
         .classed('featureselect', false);
@@ -127,20 +130,20 @@ map.featureselect = function(feature) {
     svg.selectAll('.' + iso)
         .classed('featureselect', true);
 
-    var chl_field = feature.properties[map.config.chloropleth_field];
+    var chl_field = +model[map.config.chloropleth_field];
     $('#data').empty();
-    $('#data').append('<span><strong>' + name + ' (' + iso + '). </strong></span>');
-    $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field + '</span>');
+    $('#data').append('<span><strong>' + name + '. </strong></span>');
+    $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
 }
 
 // handle output map switch events
-map.mapselect = function(feature) {
+map.mapselect = function(feature, model) {
     var name = feature.properties.NAME_1;
     var iso = feature.properties.iso;
-    var chl_field = feature.properties[map.config.chloropleth_field];
+    var chl_field = +model[map.config.chloropleth_field];
     $('#data').empty();
-    $('#data').append('<span><strong>' + name + ' (' + iso + '). </strong></span>');
-    $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field + '</span>');
+    $('#data').append('<span><strong>' + name + '. </strong></span>');
+    $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
 }
 
 module.exports = map;

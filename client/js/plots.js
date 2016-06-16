@@ -10,6 +10,9 @@ var plots = {};
  */
 plots.output = function(config) {
 
+    // get the currently selected feature
+    var selected = d3.select('#output-plot .featureselect');
+
     // clear plot before redrawing
     $('#output-plot svg').empty();
     $('#output-bubble-title').html(config.chloropleth_title);
@@ -59,10 +62,10 @@ plots.output = function(config) {
         .attr("class", "bubble");
 
     // get currently selected bubble if any
-    var selected = d3.select('#output-plot circle.featureselect');
-
-    svg.selectAll("g").remove();
-    svg.selectAll('circle').remove();
+    // var selected = d3.select('#output-plot .featureselect');
+    //
+    // svg.selectAll("g").remove();
+    // svg.selectAll('circle').remove();
 
     domain.forEach(function(d) {
         d.gdp_pc_pp = +d.gdp_pc_pp;
@@ -174,8 +177,6 @@ plots.input = function(input, selectedFeature) {
             if (selectedFeature){
                 if (data.iso == selectedFeature.properties.iso){
                     var extent = +input.brush.extent()[1].toFixed(5);
-                    console.log(extent);
-                    console.log(data[input.key]);
                     obj[input.key] = extent;
                 }
                 else {

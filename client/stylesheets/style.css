@@ -2,6 +2,7 @@ body {
     height: 100%;
     width: 100%;
     font-family: 'Lato';
+    font-size: 1.5em;
 }
 hr {
     margin: 0px !important;
@@ -175,6 +176,10 @@ div.active {
 }
 
 /* inputs */
+
+div#inputs table tr {
+    vertical-align: bottom;
+}
 
 span.descriptor {
     margin: .5em 1.5em 0 0;

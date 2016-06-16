@@ -259,11 +259,8 @@ app.drawUI = function() {
 // update the UI
 app.updateUI = function(data) {
     // update model state
-    $.each(app.state.model, function(idx, model) {
-        if (model.iso == data.iso) {
-            $.extend(model, data);
-        }
-    });
+    var model = app.state.model[data.iso];
+    $.extend(model, data);
     app.state.outputDomains = _populateOutputDomains();
     app.state.inputDomains = _populateInputDomains(app.state.inputInfo);
     app.drawUI().then(function() {
@@ -279,17 +276,15 @@ app.runmodel = function() {
     $('#spinner span').html('Running..');
     $('#spinner').css('display', 'block');
     $('#mask').css('opacity', '.1');
+
+    // pull out the model data to submit
     var selected = app.state.selectedFeature.properties.iso;
-    var df;
-    $.each(app.state.model, function(idx, model) {
-        if (model.iso == selected) {
-            df = model;
-        }
-    });
+    var df = app.state.model[selected];
+
     // update the original feature with the new inputs
     // doesn't modify the original feature
-    var model_params = $.extend({}, df, inputs.getInputValues());
-    console.log(model_params);
+    var model_params = $.extend(true, {}, df, inputs.getInputValues());
+
     // run the model
     var p = Q($.ajax({
         type: "POST",
@@ -301,7 +296,6 @@ app.runmodel = function() {
     p.then(function(df) {
         var result = JSON.parse(df);
         var obj = {};
-        // TODO improve format of return data
         $.each(result, function(idx, d) {
             obj[idx] = d['data'];
         });
@@ -347,10 +341,12 @@ $(document).on('plotselect', function(event) {
 
 // handle output map switch events
 $(document).on('mapselect', function(event) {
+    var iso = app.state.selectedFeature.properties.iso;
+    var model = app.state.model[iso];
     app.state.selectedOutput = event.config;
     map.config = app.state.selectedOutput;
     plots.mapselect(event.config);
-    map.mapselect(app.state.selectedFeature);
+    map.mapselect(app.state.selectedFeature, model);
 });
 
 // handle input slider changed events
@@ -361,6 +357,18 @@ $(document).on('inputchanged', function(event) {
 // handle runmodel events
 $(document).on('runmodel', function(event) {
     app.updateUI(event.modelData);
+});
+
+// resets the output data display to selected feature
+$(document).on('display-output-data', function(event){
+    var config = event.config;
+    var iso = app.state.selectedFeature.properties.iso;
+    var name = app.state.selectedFeature.properties.NAME_1;
+    var model = app.state.model[iso];
+    var chl_field = +model[config.chloropleth_field];
+    $('#data').empty();
+    $('#data').append('<span><strong>' + name + '. </strong></span>');
+    $('#data').append('<span><strong>' + config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
 });
 
 
