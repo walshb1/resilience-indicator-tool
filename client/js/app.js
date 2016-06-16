@@ -21,6 +21,7 @@ _loadInitialData = function() {
             app.state.layers = results[0];
             app.state.features = _getModelFeatures(results[0]);
             app.state.model = _getModelData(results[3]);
+            app.state.initialModel = $.extend(true, {}, app.state.model);
             app.state.outputDomains = _populateOutputDomains();
             app.state.inputInfo = results[1];
             app.state.inputDomains = _populateInputDomains(results[1]);
@@ -235,7 +236,7 @@ app.drawUI = function() {
             if (app.state.selectedFeature) {
                 feature = app.state.selectedFeature;
             } else {
-                feature = d3.select('.AUS') // TODO configurable
+                feature = d3.select(app.state.config['default_feature'])
                     .classed('featureselect', true)
                     .datum();
             }
@@ -244,6 +245,12 @@ app.drawUI = function() {
                 type: "featureselect",
                 feature: feature
             });
+            // trigger default input selection change
+            var input = inputs.getConfig()[app.state.config.default_input];
+            $.event.trigger({
+                type: "inputchanged",
+                input: input
+            });
             d.resolve();
         });
     return d.promise;
@@ -251,11 +258,10 @@ app.drawUI = function() {
 
 // update the UI
 app.updateUI = function(data) {
-    // update state
-    $.each(app.state.features, function(idx, feature) {
-        var props = feature.properties;
-        if (props.iso == data.iso) {
-            $.extend(props, data);
+    // update model state
+    $.each(app.state.model, function(idx, model) {
+        if (model.iso == data.iso) {
+            $.extend(model, data);
         }
     });
     app.state.outputDomains = _populateOutputDomains();
@@ -274,12 +280,10 @@ app.runmodel = function() {
     $('#spinner').css('display', 'block');
     $('#mask').css('opacity', '.1');
     var selected = app.state.selectedFeature.properties.iso;
-    var params = inputs.getInputValues();
     var df;
-    $.each(app.state.features, function(idx, feature) {
-        var props = feature.properties;
-        if (props.iso == selected) {
-            df = props;
+    $.each(app.state.model, function(idx, model) {
+        if (model.iso == selected) {
+            df = model;
         }
     });
     // update the original feature with the new inputs
@@ -299,7 +303,7 @@ app.runmodel = function() {
         var obj = {};
         // TODO improve format of return data
         $.each(result, function(idx, d) {
-            obj[idx] = d['aus'];
+            obj[idx] = d['data'];
         });
         console.log('Got new model data..', obj);
         $.event.trigger({

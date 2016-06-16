@@ -175,6 +175,7 @@ plots.input = function(input, selectedFeature) {
                 if (data.iso == selectedFeature.properties.iso){
                     var extent = +input.brush.extent()[1].toFixed(5);
                     console.log(extent);
+                    console.log(data[input.key]);
                     obj[input.key] = extent;
                 }
                 else {
@@ -184,6 +185,7 @@ plots.input = function(input, selectedFeature) {
             else {
                 obj[input.key] = data[input.key]; // TODO make this dynamic
             }
+            // obj[input.key] = data[input.key];
             obj['pop'] = data['pop'];
             domain.push(obj);
         }

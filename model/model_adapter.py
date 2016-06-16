@@ -24,8 +24,8 @@ class Model():
 
     def __init__(self, data_frame=None, debug=False):
         d = json.loads(data_frame)
-        self.data_frame = pd.DataFrame.from_dict({'aus': d}, orient='index')
-        self.data_frame.index.name = 'aus'
+        self.data_frame = pd.DataFrame.from_dict({'data': d}, orient='index')
+        self.data_frame.index.name = 'data'
         self.data_frame = pd.read_csv(
             StringIO(self.data_frame.to_csv()), sep=",", index_col=0)
         self.debug = debug
