@@ -105,12 +105,11 @@ function _generateWeb(config) {
     _generateTopojson(config)
         .then(function(files) {
             // not generating svg so copy output to maps folder
-            fs.copy(path.resolve(__dirname, files.model_features), path.resolve(__dirname, '..', 'maps', files.model_features), {
-                clobber: true
-            }, function(err) {
-                if (err) return console.error(err);
-                console.log("Copied output topojson to '../maps/" + files.model_features + "'");
-            });
+            var df = config.inputs.data.split('/')[1];
+            fs.copySync(
+                files.model_features, '../maps/' + files.model_features);
+            fs.copySync(
+                config.inputs.data, '../model/' + df);
             svg.svg(files.model_features, config)
                 .then(function(svgs) {
                     // generate pngs

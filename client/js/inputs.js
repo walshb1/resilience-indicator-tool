@@ -289,8 +289,8 @@ inputs.getInputValues = function() {
  */
 inputs.featureselect = function(feature, model) {
     var props = feature.properties;
-    var iso = props.iso;
-    $('span#selected-feature').html(props.NAME_1);
+    var id = props.id;
+    $('span#selected-feature').html(props.name);
     inputs.update(model);
 }
 

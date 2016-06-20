@@ -71,12 +71,12 @@ _getModelFeatures = function(data) {
     return topojson.feature(data, data.objects.model_features).features;
 }
 
-// returns a map of iso codes to model data entry
+// returns a map of id codes to model data entry
 _getModelData = function(data) {
     var model = {};
     $.each(data, function(idx, model_data) {
-        if (model_data.hasOwnProperty('iso')) {
-            model[model_data.iso] = model_data;
+        if (model_data.hasOwnProperty('id')) {
+            model[model_data.id] = model_data;
         }
     });
     return model;
@@ -258,7 +258,7 @@ app.drawUI = function() {
 // update the UI
 app.updateUI = function(data) {
     // update model state
-    var model = app.state.model[data.iso];
+    var model = app.state.model[data.id];
     $.extend(model, data);
     app.state.outputDomains = _populateOutputDomains();
     app.state.inputDomains = _populateInputDomains(app.state.inputInfo);
@@ -277,7 +277,7 @@ app.runmodel = function() {
     $('#mask').css('opacity', '.1');
 
     // pull out the model data to submit
-    var selected = app.state.selectedFeature.properties.iso;
+    var selected = app.state.selectedFeature.properties.id;
     var df = app.state.model[selected];
 
     // update the original feature with the new inputs
@@ -315,7 +315,7 @@ $(document).ready(function() {
 // handle featureselection events on map
 $(document).on('featureselect', function(event) {
     var feature = event.feature;
-    var model = app.state.model[feature.properties.iso];
+    var model = app.state.model[feature.properties.id];
     app.state.selectedFeature = feature;
     inputs.featureselect(feature, model);
     plots.featureselect(feature, model);
@@ -328,9 +328,9 @@ $(document).on('plotselect', function(event) {
     var source = event.source;
     $.each(app.state.features, function(idx, feature) {
         var props = feature.properties;
-        if (f.iso == props.iso) {
+        if (f.id == props.id) {
             app.state.selectedFeature = feature;
-            var model = app.state.model[props.iso];
+            var model = app.state.model[props.id];
             inputs.featureselect(feature, model);
             map.featureselect(feature, model);
             plots.plotselect(feature, model, source);
@@ -340,8 +340,8 @@ $(document).on('plotselect', function(event) {
 
 // handle output map switch events
 $(document).on('mapselect', function(event) {
-    var iso = app.state.selectedFeature.properties.iso;
-    var model = app.state.model[iso];
+    var id = app.state.selectedFeature.properties.id;
+    var model = app.state.model[id];
     app.state.selectedOutput = event.config;
     map.config = app.state.selectedOutput;
     plots.mapselect(event.config);
@@ -361,9 +361,9 @@ $(document).on('runmodel', function(event) {
 // resets the output data display to selected feature
 $(document).on('display-output-data', function(event){
     var config = event.config;
-    var iso = app.state.selectedFeature.properties.iso;
-    var name = app.state.selectedFeature.properties.NAME_1;
-    var model = app.state.model[iso];
+    var id = app.state.selectedFeature.properties.id;
+    var name = app.state.selectedFeature.properties.name;
+    var model = app.state.model[id];
     var chl_field = +model[config.chloropleth_field];
     $('#data').empty();
     $('#data').append('<span><strong>' + name + '. </strong></span>');

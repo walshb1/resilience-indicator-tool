@@ -32,7 +32,7 @@ plots.output = function(config) {
             var obj = {};
             // TODO rename this field in preprocess config
             obj['name'] = data['province'];
-            obj['iso'] = data['iso']
+            obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
             obj[config.chloropleth_field] = data[config.chloropleth_field];
             obj['pop'] = data['pop'];
@@ -101,7 +101,7 @@ plots.output = function(config) {
         .data(domain)
         .enter().append("circle")
         .attr("class", function(d) {
-            return "dot " + d.iso;
+            return "dot " + d.id;
         })
         .attr("r", function(d) {
             return Math.floor(Math.log(d.pop));
@@ -119,7 +119,7 @@ plots.output = function(config) {
         .style("opacity", '.5')
         .on('mousedown', function(d) {
             // don't select countries with no data
-            if (!d.iso) {
+            if (!d.id) {
                 return;
             }
             // clear selection before re-selecting
@@ -127,8 +127,8 @@ plots.output = function(config) {
                 .classed('featureselect', false);
 
             // select the feature
-            var iso = d.iso;
-            svg.selectAll('circle.dot.' + iso)
+            var id = d.id;
+            svg.selectAll('circle.dot.' + id)
                 .classed('featureselect', true);
 
             // notify event listeners
@@ -144,7 +144,7 @@ plots.output = function(config) {
         });
 
     if (!selected.empty()) {
-        var sel = d3.select('.dot.' + selected.datum().iso);
+        var sel = d3.select('.dot.' + selected.datum().id);
         sel.attr("class", "featureselect");
     }
 }
@@ -166,10 +166,10 @@ plots.input = function(input, selectedFeature) {
         if (data['gdp_pc_pp']) {
             var obj = {};
             obj['name'] = data['province'];
-            obj['iso'] = data['iso']
+            obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
             if (selectedFeature){
-                if (data.iso == selectedFeature.properties.iso){
+                if (data.id == selectedFeature.properties.id){
                     var extent = +input.brush.extent()[1].toFixed(5);
                     obj[input.key] = extent;
                 }
@@ -253,7 +253,7 @@ plots.input = function(input, selectedFeature) {
         .data(domain)
         .enter().append("circle")
         .attr("class", function(d) {
-            return "dot " + d.iso;
+            return "dot " + d.id;
         })
         .attr("r", function(d) {
             return Math.floor(Math.log(d.pop));
@@ -271,7 +271,7 @@ plots.input = function(input, selectedFeature) {
         .style("opacity", '.5')
         .on('mousedown', function(d) {
             // don't select countries with no data
-            if (!d.iso) {
+            if (!d.id) {
                 return;
             }
             // clear selection before re-selecting
@@ -279,8 +279,8 @@ plots.input = function(input, selectedFeature) {
                 .classed('featureselect', false);
 
             // select the feature
-            var iso = d.iso;
-            svg.selectAll('circle.dot.' + iso)
+            var id = d.id;
+            svg.selectAll('circle.dot.' + id)
                 .classed('featureselect', true);
 
             // notify event listeners
@@ -328,18 +328,18 @@ plots.input = function(input, selectedFeature) {
 // handle feature selection
 plots.featureselect = function(feature) {
     // update output plot
-    var iso = feature.properties.iso;
+    var id = feature.properties.id;
     var svg = d3.select('#output-plot');
     svg.selectAll('circle')
         .classed('featureselect', false);
-    svg.selectAll('.' + iso)
+    svg.selectAll('.' + id)
         .classed('featureselect', true);
 
     // update input plot and select current feature
     var svg = d3.select('#input-plot');
     svg.selectAll('circle')
         .classed('featureselect', false);
-    svg.selectAll('.' + iso)
+    svg.selectAll('.' + id)
         .classed('featureselect', true);
 }
 
@@ -351,12 +351,12 @@ plots.mapselect = function(map_config) {
 // redraw the input scatterplot when an input is changed by the user
 plots.inputchanged = function(input, selectedFeature){
     // redraw the plot based on the current input
-    var iso = selectedFeature.properties.iso;
+    var id = selectedFeature.properties.id;
     plots.input(input, selectedFeature);
     var svg = d3.select('#input-plot');
     svg.selectAll('circle')
         .classed('featureselect', false);
-    svg.selectAll('.' + iso)
+    svg.selectAll('.' + id)
         .classed('featureselect', true);
 }
 
@@ -367,8 +367,8 @@ plots.plotselect = function(feature, model, source){
     var selected = d3.select('#' + update + ' circle.featureselect');
     selected.classed('featureselect', false);
     // select the newly selected feature
-    var sel = d3.select('#' + update + ' circle.dot.' + model.iso);
-    sel.attr("class", "dot " + model.iso + " featureselect");
+    var sel = d3.select('#' + update + ' circle.dot.' + model.id);
+    sel.attr("class", "dot " + model.id + " featureselect");
 }
 
 module.exports = plots;

@@ -59,18 +59,18 @@ map.draw = function(config, json, model_data) {
         .enter()
         .append("path")
         .attr("id", function(d){
-            return d.properties.iso;
+            return d.properties.id;
         })
         .attr("class", function(d) {
             // check resilience by default
-            var iso = d.properties.iso;
-            var model = model_data[iso];
+            var id = d.properties.id;
+            var model = model_data[id];
             if (model){
                 var cls = model.resilience == null ? 'nodata' : 'data';
-                return sprintf("feature %s %s", cls, iso);
+                return sprintf("feature %s %s", cls, id);
             }
             else {
-                // return sprintf("feature %s", iso);
+                // return sprintf("feature %s", id);
             }
         })
         .attr("d", path)
@@ -81,19 +81,19 @@ map.draw = function(config, json, model_data) {
             });
         })
         .on('mouseover', function(d) {
-            var name = d.properties.NAME_1;
-            var iso = d.properties.iso;
+            var name = d.properties.name;
+            var id = d.properties.id;
             if (name) {
-                var chl_field = +model_data[iso][map.config.chloropleth_field];
-                var iso = d.properties.iso;
+                var chl_field = +model_data[id][map.config.chloropleth_field];
+                var id = d.properties.id;
                 $('#data').empty();
                 $('#data').append('<span><strong>' + name + '. </strong></span>');
                 $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
             }
         })
         .on('mousedown', function(d) {
-            // don't select countries if we don't have iso code
-            if (!d.properties.iso) {
+            // don't select countries if we don't have id code
+            if (!d.properties.id) {
                 return;
             }
             // clear selection before re-selecting
@@ -101,8 +101,8 @@ map.draw = function(config, json, model_data) {
                 .classed('featureselect', false);
 
             // select the feature
-            var iso = d.properties.iso;
-            modelFeatures.selectAll('.' + iso)
+            var id = d.properties.id;
+            modelFeatures.selectAll('.' + id)
                 .classed('featureselect', true);
 
             // notify event listeners
@@ -125,9 +125,9 @@ map.featureselect = function(feature, model) {
         .classed('featureselect', false);
 
     // select the feature
-    var name = feature.properties.NAME_1;
-    var iso = feature.properties.iso;
-    svg.selectAll('.' + iso)
+    var name = feature.properties.name;
+    var id = feature.properties.id;
+    svg.selectAll('.' + id)
         .classed('featureselect', true);
 
     var chl_field = +model[map.config.chloropleth_field];
@@ -138,8 +138,8 @@ map.featureselect = function(feature, model) {
 
 // handle output map switch events
 map.mapselect = function(feature, model) {
-    var name = feature.properties.NAME_1;
-    var iso = feature.properties.iso;
+    var name = feature.properties.name;
+    var id = feature.properties.id;
     var chl_field = +model[map.config.chloropleth_field];
     $('#data').empty();
     $('#data').append('<span><strong>' + name + '. </strong></span>');

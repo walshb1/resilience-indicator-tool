@@ -65,7 +65,7 @@ styles.computeStyles = function(colorScale, model_data) {
     svg.selectAll(".feature")
         .style("fill", function(d) {
             // map resilience output by default
-            var model = model_data[d.properties.iso];
+            var model = model_data[d.properties.id];
             if(model){
                 var value = model.resilience;
                 var color = styles.chloropleth(colorScale, value);
