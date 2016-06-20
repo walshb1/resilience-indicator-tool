@@ -42,7 +42,7 @@ router.get('/inputs.json', function(req, res) {
 // gets the application configuration
 router.get('/config.json', function(req, res) {
     res.setHeader("content-type", "application/json");
-    fs.createReadStream("conf/config.js").pipe(res);
+    fs.createReadStream("conf/config.json").pipe(res);
 });
 
 // gets the inital model data
