@@ -2,7 +2,8 @@ var express = require('express'),
     path = require('path'),
     fs = require('fs'),
     model = require('../model/model'),
-    csv2json = require('csv2json');
+    csv2json = require('csv2json')
+    config = require('../conf/config');
 
 var router = express.Router();
 

@@ -61,9 +61,8 @@ _loadModelData = function() {
 // load the application configuration
 _loadConfig = function() {
     var d = Q.defer();
-    $.getJSON('config.json', function(data) {
-        d.resolve(data);
-    });
+    var config = require('../../conf/config')
+    d.resolve(config);
     return d.promise;
 }
 
