@@ -10,7 +10,7 @@ var plots = {};
  */
 plots.output = function(config) {
 
-    // get the currently selected feature
+    // keep a reference to the currently selected feature
     var selected = d3.select('#output-plot .featureselect');
 
     // clear plot before redrawing
@@ -60,12 +60,6 @@ plots.output = function(config) {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .attr("class", "bubble");
-
-    // get currently selected bubble if any
-    // var selected = d3.select('#output-plot .featureselect');
-    //
-    // svg.selectAll("g").remove();
-    // svg.selectAll('circle').remove();
 
     domain.forEach(function(d) {
         d.gdp_pc_pp = +d.gdp_pc_pp;
