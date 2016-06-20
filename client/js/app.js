@@ -25,7 +25,7 @@ _loadInitialData = function() {
             app.state.outputDomains = _populateOutputDomains();
             app.state.inputInfo = results[1];
             app.state.inputDomains = _populateInputDomains(results[1]);
-            app.state.selectedFeature = app.state.features[0];
+            app.state.selectedFeature = _getDefaultFeature();
             d.resolve();
         });
     return d.promise;
@@ -64,6 +64,17 @@ _loadConfig = function() {
     var config = require('../../conf/config')
     d.resolve(config);
     return d.promise;
+}
+
+// get the default feature from app config
+_getDefaultFeature = function(){
+    var f;
+    $.each(app.state.features, function(idx, feature){
+        if (feature.properties.id == app.state.config.default_feature){
+            f = feature;
+        }
+    });
+    return f;
 }
 
 // returns geojson features from topojson
