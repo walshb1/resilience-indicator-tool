@@ -287,7 +287,7 @@ app.runmodel = function() {
     // run the model
     var p = Q($.ajax({
         type: "POST",
-        url: "/runmodel",
+        url: "runmodel",
         data: model_params
     }));
 
