@@ -205,7 +205,11 @@ inputs.getSliders = function(inputConfig) {
             span.html(function() {
                 var percent = input.number_type == ('percent' || 'small_percent') ? ' %' : '';
                 var ext = +input.brush.extent()[1];
-                return ext.toFixed(3) + percent;
+                if (percent != ''){
+                    ext = +input.brush.extent()[1] * 100;
+                    return ext.toFixed(1) + percent;
+                }
+                return ext.toFixed(3);
             });
         }
 
