@@ -64,7 +64,7 @@ function _clean() {
 function _generateSvg(config) {
     _generateTopojson(config)
         .then(function(files) {
-            svg.svg(files.model_features, config)
+            svg.svg(files.map_data, config)
                 .then(function(svgs) {
                     // generating svg so delete intermediate topojson artifact
                     fs.removeSync(config.topojson_out, function(err) {
@@ -82,12 +82,12 @@ function _generateTopojson(config) {
     var d = Q.defer();
     // check for merge-model
     if (argv.m) {
-        topojson.model_features(config)
+        topojson.all(config, merge_model=true)
             .then(function(files) {
                 d.resolve(files);
             })
     } else {
-        topojson.plain_features(config)
+        topojson.all(config, merge_model=false)
             .then(function(files) {
                 d.resolve(files);
             });
