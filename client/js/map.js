@@ -30,6 +30,30 @@ map.draw = function(config, json, model_data) {
         .attr("height", height);
 
     var layerGroup = svg.append("g");
+
+    var path = d3.geo.path().projection(null);
+
+    // create layer groups for layers that don't contain model features
+    for (var l in json.objects){
+        if (l == 'model_features') continue;
+        var layer = json.objects[l];
+
+        var data = topojson.feature(json, layer).features;
+        var lg = layerGroup.append("g");
+        lg.selectAll('.' + l)
+            .data(data)
+            .enter()
+            .append("path")
+            .attr("class", function(d) {
+                var style = '';
+                if (d.properties.hasOwnProperty('Style')){
+                    style = d.properties.Style.replace(/ /g, '_').toLowerCase();
+                }
+                return l + ' ' + style;
+            })
+            .attr("d", path);
+    }
+
     var modelFeatures = layerGroup.append("g");
 
     var zoom = d3.behavior.zoom()
@@ -48,12 +72,10 @@ map.draw = function(config, json, model_data) {
         layerGroup.attr("transform", "translate(" + t + ") scale(" + s + ")");
     }
 
-    // pull out geojson layers
+    // pull out the model features
     var model_features = topojson.feature(json, json.objects.model_features).features;
 
-    var path = d3.geo.path().projection(null);
-
-    // countries
+    // model features
     modelFeatures.selectAll(".feature")
         .data(model_features)
         .enter()
