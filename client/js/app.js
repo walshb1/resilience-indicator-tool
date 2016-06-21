@@ -68,7 +68,7 @@ _loadConfig = function() {
 
 // get the default feature from app config
 _getDefaultFeature = function(){
-    var f;
+    var f = null;
     $.each(app.state.features, function(idx, feature){
         if (feature.properties.id == app.state.config.default_feature){
             f = feature;
