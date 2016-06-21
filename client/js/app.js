@@ -184,7 +184,7 @@ _renderConfig = function(e) {
         var colorScale = styles.colorScale('resilience', app.state.outputDomains['resilience']);
         return {
             'chloropleth_field': 'resilience',
-            'chloropleth_title': 'Resilience',
+            'chloropleth_title': 'Socioeconomic capacity (%)',
             'colorScale': colorScale
         }
     }
