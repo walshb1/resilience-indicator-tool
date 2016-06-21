@@ -176,10 +176,10 @@ generate.all = function(config, merge_model) {
                 // generate the final result, reprojected and resized
                 exec(topoCmd, function(err, stdout, stderr) {
                     if (err) return console.log(err);
+                    d.resolve({'map_data': 'map_data.topojson'});
                     console.log('Created map_data.topojson');
                 });
             });
-            d.resolve(files);
         });
     return d.promise;
 }

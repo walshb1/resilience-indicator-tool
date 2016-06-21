@@ -104,13 +104,14 @@ function _generateTopojson(config) {
 function _generateWeb(config) {
     _generateTopojson(config)
         .then(function(files) {
+            console.log(files);
             // not generating svg so copy output to maps folder
             var df = config.inputs.data.split('/')[1];
             fs.copySync(
-                files.model_features, '../maps/' + files.model_features);
+                files.map_data, '../maps/' + files.map_data);
             fs.copySync(
                 config.inputs.data, '../model/' + df);
-            svg.svg(files.model_features, config)
+            svg.svg(files.map_data, config)
                 .then(function(svgs) {
                     // generate pngs
                     var pngs = png.convert(config, svgs);
