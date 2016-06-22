@@ -20,10 +20,8 @@ map.draw = function(config, json, model_data) {
     // update the map config
     map.config = config;
     var d = Q.defer();
-    // var width = dim[0];
-    // var height = dim[1];
-    var width = 500;
-    var height = 500;
+    var width = config.width;
+    var height = config.height;
     svg = d3.select("#map")
         .append("svg")
         .attr("width", width)
@@ -31,13 +29,14 @@ map.draw = function(config, json, model_data) {
 
     var layerGroup = svg.append("g");
 
+    var modelFeatures = layerGroup.append("g");
+
     var path = d3.geo.path().projection(null);
 
     // create layer groups for layers that don't contain model features
     for (var l in json.objects){
         if (l == 'model_features') continue;
         var layer = json.objects[l];
-
         var data = topojson.feature(json, layer).features;
         var lg = layerGroup.append("g");
         lg.selectAll('.' + l)
@@ -54,10 +53,8 @@ map.draw = function(config, json, model_data) {
             .attr("d", path);
     }
 
-    var modelFeatures = layerGroup.append("g");
-
     var zoom = d3.behavior.zoom()
-        .scaleExtent([1, 10])
+        .scaleExtent([1, 20])
         .on("zoom", zoomed);
 
     svg.call(zoom).call(zoom.event);
@@ -84,15 +81,13 @@ map.draw = function(config, json, model_data) {
             return d.properties.id;
         })
         .attr("class", function(d) {
-            // check resilience by default
             var id = d.properties.id;
             var model = model_data[id];
             if (model){
-                var cls = model.resilience == null ? 'nodata' : 'data';
-                return sprintf("feature %s %s", cls, id);
+                return sprintf("feature data %s", id);
             }
             else {
-                // return sprintf("feature %s", id);
+                return "feature nodata";
             }
         })
         .attr("d", path)

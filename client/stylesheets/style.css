@@ -94,48 +94,6 @@ div#ui {
 div.active {
     display: none;
 }
-.coastline {
-    fill: none;
-    stroke: lightblue;
-    stroke-width: .05;
-    stroke-linejoin: miter;
-}
-.country {
-    fill: #CCC;
-    stroke: red;
-    stroke-width: .001;
-    stroke-linejoin: miter;
-}
-.intlbdie {
-    fill: none;
-    stroke: #666;
-    stroke-width: .25;
-    stroke-linejoin: miter;
-}
-.disputed {
-    fill: #BDBCBC;
-}
-.tightly_dashed_line {
-    fill: none;
-    stroke: #666;
-    stroke-width: .25;
-    stroke-dasharray: 1, .5;
-    stroke-linejoin: miter;
-}
-.dotted_line {
-    fill: none;
-    stroke: #666;
-    stroke-width: .25;
-    stroke-dasharray: .1, .5;
-    stroke-linecap: round;
-}
-.dashed_line {
-    fill: none;
-    stroke: #666;
-    stroke-width: .25;
-    stroke-dasharray: .3, .3;
-    stroke-linejoin: miter;
-}
 #objective-map {
     width: auto;
     height: 650px;

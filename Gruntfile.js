@@ -9,7 +9,7 @@ module.exports = function(grunt) {
       'public/js/plots.js': ['client/js/plots.js']
     },
     watch: {
-      files: [ "client/**/*.js", "client/**/*.css"],
+      files: [ "client/**/*.js", "client/**/*.css", "conf/*.json"],
       tasks: [ 'build']
     },
     uglify: {

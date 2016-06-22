@@ -178,6 +178,8 @@ _drawMap = function() {
 
 // get the map rendering configuration
 _renderConfig = function(e) {
+    var w = app.state.config.map.width;
+    var h = app.state.config.map.height;
     if (e) {
         var chloropleth_field =
             e.currentTarget.getAttribute('data-output');
@@ -186,7 +188,9 @@ _renderConfig = function(e) {
         return {
             'chloropleth_field': chloropleth_field,
             'chloropleth_title': chloropleth_title,
-            'colorScale': colorScale
+            'colorScale': colorScale,
+            'width': w,
+            'height': h
         }
     } else if (app.state.selectedOutput) {
         return app.state.selectedOutput;
@@ -196,7 +200,9 @@ _renderConfig = function(e) {
         return {
             'chloropleth_field': 'resilience',
             'chloropleth_title': 'Socioeconomic capacity (%)',
-            'colorScale': colorScale
+            'colorScale': colorScale,
+            'width': w,
+            'height': h
         }
     }
 }
@@ -223,6 +229,7 @@ app.init = function() {
         // update the map config
         var config = _renderConfig(e);
         styles.computeStyles(config.colorScale, app.state.model);
+        styles.applyDefaults();
         $('#title').html(config.chloropleth_title);
         $.event.trigger({
             type: 'mapselect',

@@ -16,7 +16,7 @@ config = {
             "layer_name": "model_features",
             // input shapefile name - relative to index.js
             "shape_file": "world/shp/WB_CountryPolys.shp",
-            // fields to preserve from input to output
+            // fields to preserve from input shapefile to output topojson
             "filter_fields": "name,id",
             // rename input fields in output topojson
             "rename_fields": "",
@@ -63,9 +63,9 @@ config = {
         "simplify_line": "20%",
         // svg/topojson width and height
         "width": 500,
-        "height": 530,
+        "height": 350,
         "margin": 15,
-        "projection": 'd3.geo.equirectangular()'
+        "projection": 'd3.geo.robinson()'
     },
     "svg": {
         // svg styles

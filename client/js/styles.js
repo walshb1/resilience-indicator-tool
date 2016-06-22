@@ -12,47 +12,51 @@ styles.applyDefaults = function() {
 
     // nodata info
     svg.selectAll(".nodata")
+        .style('fill', '#ccc')
+        // .style('stroke', '#666')
+        // .style('stroke-width', '.5')
+        // .style('stroke-linejoin', 'miter')
         .on('mouseover', function(d) {
             $('#data').empty();
             $('#data').append('<span><strong>No data</strong></span>');
         });
 
-    svg.selectAll('.coastline')
+    svg.selectAll('.coastlines')
         .style('fill', 'none')
         .style('stroke', '#666')
-        .style('stroke-width', '.4px')
+        .style('stroke-width', '.2px')
         .style('stroke-linejoin', 'miter');
 
-    svg.selectAll('.intlbdie')
+    svg.selectAll('.international_boundaries')
         .style('fill', 'none')
         .style('stroke', '#666')
-        .style('stroke-width', '.5px')
+        .style('stroke-width', '.2px')
         .style('stroke-linejoin', 'miter');
 
-    svg.selectAll('.dispbdies')
+    svg.selectAll('.disputed_boundaries')
         .style('fill', 'none');
 
-    svg.selectAll('.disputed')
+    svg.selectAll('.disputed_areas')
         .style('fill', '#E0E0E0');
 
     svg.selectAll('.dotted_line')
         .style('fill', 'none')
         .style('stroke', '#666')
-        .style('stroke-width', '.5px')
+        .style('stroke-width', '.2px')
         .style('stroke-dasharray', '.1, .8')
         .style('stroke-linecap', 'round');
 
     svg.selectAll('.dashed_line')
         .style('fill', 'none')
         .style('stroke', '#666')
-        .style('stroke-width', '.5px')
+        .style('stroke-width', '.2px')
         .style('stroke-dasharray', '.8, .8')
         .style('stroke-linejoin', 'miter');
 
     svg.selectAll('.tightly_dashed_line')
         .style('fill', 'none')
         .style('stroke', '#666')
-        .style('stroke-width', '.5px')
+        .style('stroke-width', '.2px')
         .style('stroke-dasharray', '1.5, .5')
         .style('stroke-linejoin', 'miter');
 }
@@ -61,7 +65,6 @@ styles.computeStyles = function(colorScale, model_data) {
 
     var svg = d3.select("#map");
 
-    // countries
     svg.selectAll(".feature")
         .style("fill", function(d) {
             // map resilience output by default
@@ -75,8 +78,6 @@ styles.computeStyles = function(colorScale, model_data) {
 }
 
 styles.colorScale = function(domain, data) {
-
-    //TODO: resilience only for first pass
 
     color_ranges = {
         'resilience': colorbrewer.Reds[5].reverse(),
