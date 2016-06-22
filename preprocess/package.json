@@ -9,8 +9,10 @@
   "author": "Brian O'Hare",
   "license": "ISC",
   "dependencies": {
+    "colorbrewer": "^1.0.0",
     "d3": "^3.5.16",
     "d3-geo-projection": "^0.2.16",
+    "fs-extra": "^0.30.0",
     "jquery": "^2.2.4",
     "jsdom": "^8.3.1",
     "mapshaper": "^0.3.19",
