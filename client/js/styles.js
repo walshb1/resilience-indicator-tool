@@ -79,15 +79,20 @@ styles.computeStyles = function(colorScale, model_data) {
 
 styles.colorScale = function(domain, data) {
 
+    var d = data.domain.sort(function(a, b) {
+        return a - b;
+    });
+
     color_ranges = {
-        'resilience': colorbrewer.Reds[5].reverse(),
-        'risk': colorbrewer.Purples[5].reverse(),
+        'resilience': colorbrewer.Reds[5],
+        'risk': colorbrewer.Purples[5],
         'risk_to_assets': colorbrewer.Blues[5]
     }
 
     //create quantile classes with color scale
     var colors = d3.scale.quantile()
-        .domain([0, 1])
+        // .domain([0, 1])
+        .domain(d)
         .range(color_ranges[domain]);
 
     return colors; //return the color scale generator

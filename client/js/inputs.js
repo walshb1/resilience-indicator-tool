@@ -108,7 +108,6 @@ inputs.getSliders = function(inputConfig) {
             .attr("id", input.key)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
         // add gaussian curve
         var gaus = svg.append("g")
             .attr("id", input.key)
@@ -205,7 +204,7 @@ inputs.getSliders = function(inputConfig) {
             span.html(function() {
                 var percent = input.number_type == ('percent' || 'small_percent') ? ' %' : '';
                 var ext = +input.brush.extent()[1];
-                if (percent != ''){
+                if (percent != '') {
                     ext = +input.brush.extent()[1] * 100;
                     return ext.toFixed(1) + percent;
                 }

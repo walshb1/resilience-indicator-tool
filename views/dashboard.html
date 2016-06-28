@@ -4,7 +4,7 @@
     <div id="ui" class="row">
         <!-- left column -->
         <div class="col-sm-4">
-            <a href="#"><strong><i class="glyphicon glyphicon-globe"></i> <span id="title">Socioeconomic Capacity (%)</span></strong></a>
+            <a class="nolink"><strong><i class="glyphicon glyphicon-globe"></i> <span id="title">Socioeconomic Capacity (%)</span></strong></a>
             <hr>
             <div class="row">
                 <div class="col-sm-12">
@@ -35,8 +35,14 @@
 
         <!-- middle column -->
         <div class="col-sm-4">
-            <a href="#"><strong><i class="glyphicon glyphicon-wrench"></i> <span id="selected-feature"></span></strong></a>
-            <hr>
+            <a class="nolink"><strong><i class="glyphicon glyphicon-wrench"></i> <span id="selected-feature"></span></strong></a>
+            <hr/>
+            <a name="outputs" class="nolink"><br/><span><strong>  Outputs</strong></span></a>
+            <div class="row">
+                <div id="outputs"></div>
+            </div>
+            <br/><hr/>
+            <a name="inputs" class="nolink"><br/><span><strong>  Inputs</strong></span></a>
             <div class="row">
                 <div id="inputs"></div>
             </div>
@@ -50,7 +56,7 @@
 
         <!-- right column -->
         <div class="col-sm-4">
-            <a href="#"><strong><i class="glyphicon glyphicon-stats"></i> Output: <span id="output-bubble-title"></span></strong></a>
+            <a  class="nolink"><strong><i class="glyphicon glyphicon-stats"></i> Output: <span id="output-bubble-title"></span></strong></a>
             <hr>
             <div class="row">
                 <div id="output-plot">

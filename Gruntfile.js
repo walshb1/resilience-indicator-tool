@@ -6,6 +6,7 @@ module.exports = function(grunt) {
       'public/js/map.js': ['client/js/map.js'],
       'public/js/styles.js': ['client/js/styles.js'],
       'public/js/inputs.js': ['client/js/inputs.js'],
+      'public/js/outputs.js': ['client/js/outputs.js'], 
       'public/js/plots.js': ['client/js/plots.js']
     },
     watch: {

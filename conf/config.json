@@ -1,11 +1,26 @@
 {
-    "outputs": ["risk", "resilience", "risk_to_assets"],
+    "outputs": {
+        "resilience": {
+            "descriptor": "Resilience",
+            "gradient": ["#bd0026", "#ffffb2"]
+        },
+        "risk": {
+            "descriptor": "Risk",
+            "gradient": ["#feebe2", "#7a0177"]
+        },
+        "risk_to_assets": {
+            "descriptor": "Risk to assets",
+            "gradient": ["#f1eef6", "#045a8d"]
+        }
+    },
     "inputs": ["axfin_p", "axfin_r", "axhealth", "finance_pre",
         "pe", "plgp", "prepare_scaleup", "pv", "rating", "share1",
-        "social_p", "social_r", "unemp", "protection", "fa", "v"],
+        "social_p", "social_r", "unemp", "protection", "fa", "v"
+    ],
     "default_input": "axfin_p",
     "default_feature": "AUS",
     "model_data": "df_world.csv",
+    "model_function": "a_function.py",
     "map": {
         "width": 500,
         "height": 350

@@ -5,6 +5,7 @@ var $ = require('jquery'),
     map = require('./map'),
     styles = require('./styles'),
     inputs = require('./inputs'),
+    outputs = require('./outputs'),
     plots = require('./plots');
 
 var app = {};
@@ -67,10 +68,10 @@ _loadConfig = function() {
 }
 
 // get the default feature from app config
-_getDefaultFeature = function(){
+_getDefaultFeature = function() {
     var f = null;
-    $.each(app.state.features, function(idx, feature){
-        if (feature.properties.id == app.state.config.default_feature){
+    $.each(app.state.features, function(idx, feature) {
+        if (feature.properties.id == app.state.config.default_feature) {
             f = feature;
         }
     });
@@ -95,25 +96,17 @@ _getModelData = function(data) {
 
 // Collects values for each of the output domains.
 _populateOutputDomains = function() {
-    var outputDomains = {
-        'resilience': [],
-        'risk': [],
-        'risk_to_assets': [],
-    }
-    $.each(app.state.model, function(idx, data) {
-        // TODO do these need to be configurable?
-        var res = data['resilience'];
-        var wel = data['risk'];
-        var assets = data['risk_to_assets'];
-        if (res) {
-            outputDomains['resilience'].push(res);
-        }
-        if (wel) {
-            outputDomains['risk'].push(wel);
-        }
-        if (assets) {
-            outputDomains['risk_to_assets'].push(assets);
-        }
+    var outputDomains = {}
+    $.each(app.state.config.outputs, function(idx, output) {
+        outputDomains[idx] = {
+            'domain': [],
+            'descriptor': output.descriptor,
+            'gradient': output.gradient
+        };
+        $.each(app.state.model, function(i, data) {
+            var val = data[idx];
+            outputDomains[idx].domain.push(val);
+        });
     });
     return outputDomains;
 }
@@ -149,6 +142,11 @@ _createInputSliders = function(data) {
     _createScatterPlots()
 }
 
+_createOutputDistributions = function() {
+    // create output distribution graphs
+    outputs.getOutputDistributions(app.state.outputDomains);
+}
+
 // generate the scatter plots
 _createScatterPlots = function() {
     var defaultInput = app.state.config.default_input;
@@ -171,19 +169,20 @@ _drawMap = function() {
             styles.applyDefaults();
             $.event.trigger({
                 type: 'mapselect',
-                config: config
+                chloropleth_title: config.chloropleth_title,
+                chloropleth_field: config.chloropleth_field
             })
         });
 }
 
 // get the map rendering configuration
-_renderConfig = function(e) {
+_renderConfig = function(chloropleth_field, chloropleth_title) {
     var w = app.state.config.map.width;
     var h = app.state.config.map.height;
-    if (e) {
-        var chloropleth_field =
-            e.currentTarget.getAttribute('data-output');
-        var chloropleth_title = e.currentTarget.getAttribute('data-output-title');
+    if (chloropleth_field && chloropleth_title) {
+        // var chloropleth_field =
+        //     e.currentTarget.getAttribute('data-output');
+        // var chloropleth_title = e.currentTarget.getAttribute('data-output-title');
         var colorScale = styles.colorScale(chloropleth_field, app.state.outputDomains[chloropleth_field]);
         return {
             'chloropleth_field': chloropleth_field,
@@ -220,20 +219,13 @@ app.init = function() {
     });
 
     // map switcher event handling
-    $('.sm-map').bind('click', function(e) {
-        var smMapId = e.currentTarget.id;
-        $('.sm-map img').removeClass('active');
-        $('div.sm-map').parent().removeClass('active');
-        $('div#' + smMapId).parent().addClass('active');
-        $('#' + smMapId + ' img').addClass('active');
-        // update the map config
-        var config = _renderConfig(e);
-        styles.computeStyles(config.colorScale, app.state.model);
-        styles.applyDefaults();
-        $('#title').html(config.chloropleth_title);
+    $('.sm-map').on('click', function(e) {
+        var chloropleth_field = e.currentTarget.getAttribute('data-output'),
+            chloropleth_title =  e.currentTarget.getAttribute('data-output-title');
         $.event.trigger({
             type: 'mapselect',
-            config: config
+            chloropleth_field: chloropleth_field,
+            chloropleth_title: chloropleth_title
         });
     });
 
@@ -246,7 +238,7 @@ app.init = function() {
 // draw the UI
 app.drawUI = function() {
     var d = Q.defer();
-    Q.all([_createInputSliders(), _drawMap()])
+    Q.all([_createInputSliders(), _createOutputDistributions(), _drawMap()])
         .then(function() {
             // select the country
             var selectedFeature;
@@ -336,6 +328,7 @@ $(document).on('featureselect', function(event) {
     var model = app.state.model[feature.properties.id];
     app.state.selectedFeature = feature;
     inputs.featureselect(feature, model);
+    outputs.featureselect(feature, model);
     plots.featureselect(feature, model);
     map.featureselect(feature, model);
 });
@@ -350,6 +343,7 @@ $(document).on('plotselect', function(event) {
             app.state.selectedFeature = feature;
             var model = app.state.model[props.id];
             inputs.featureselect(feature, model);
+            outputs.featureselect(feature, model);
             map.featureselect(feature, model);
             plots.plotselect(feature, model, source);
         }
@@ -357,12 +351,38 @@ $(document).on('plotselect', function(event) {
 });
 
 // handle output map switch events
-$(document).on('mapselect', function(event) {
+$(document).on('mapselect', function(e) {
+    // update the map config
+    var chloropleth_field = e.chloropleth_field,
+        chloropleth_title = e.chloropleth_title;
+
+    // update map div active styles
+    $('.sm-map img').removeClass('active');
+    $('div.sm-map').parent().removeClass('active');
+    var mapDiv = $("div.sm-map[data-output='" + chloropleth_field + "']");
+    mapDiv.parent().addClass('active');
+    $('#' + mapDiv.id + ' img').addClass('active');
+
+    // update output div active styles
+    $('#outputs div').css({
+        'background': 'transparent',
+        'border': 'none'
+    });
+    $('#outputs div#' + chloropleth_field).css({
+        'background-color': 'rgba(211, 211, 211, 0.3)',
+        'border': '1px solid rgba(211, 211, 211, 0.5)'
+    });
+
+    // switch output maps
+    var config = _renderConfig(chloropleth_field, chloropleth_title);
+    styles.computeStyles(config.colorScale, app.state.model);
+    styles.applyDefaults();
+    $('#title').html(chloropleth_title);
     var id = app.state.selectedFeature.properties.id;
     var model = app.state.model[id];
-    app.state.selectedOutput = event.config;
+    app.state.selectedOutput = config;
     map.config = app.state.selectedOutput;
-    plots.mapselect(event.config);
+    plots.mapselect(config);
     map.mapselect(app.state.selectedFeature, model);
 });
 
@@ -377,7 +397,7 @@ $(document).on('runmodel', function(event) {
 });
 
 // resets the output data display to selected feature
-$(document).on('display-output-data', function(event){
+$(document).on('display-output-data', function(event) {
     var config = event.config;
     var id = app.state.selectedFeature.properties.id;
     var name = app.state.selectedFeature.properties.name;
@@ -386,6 +406,15 @@ $(document).on('display-output-data', function(event){
     $('#data').empty();
     $('#data').append('<span><strong>' + name + '. </strong></span>');
     $('#data').append('<span><strong>' + config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
+});
+
+$(document).on('outputselect', function(e){
+    var output = e.currentTarget.getAttribute('data-output');
+    var config = _renderConfig(e);
+    styles.computeStyles(config.colorScale, app.state.model);
+    styles.applyDefaults();
+    $('#title').html(config.chloropleth_title);
+    alert(output);
 });
 
 

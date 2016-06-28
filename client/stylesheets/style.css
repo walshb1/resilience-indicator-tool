@@ -22,6 +22,10 @@ i {
 .nav> li> a {
     color: #787878;
 }
+a.nolink {
+    text-decoration: none;
+    cursor: default;
+}
 footer {
     margin-top: 20px;
     padding-top: 20px;
@@ -80,6 +84,7 @@ div#ui {
     text-align: center;
     padding: 2px !important;
     margin: 15px 0px 0px -15px;
+    cursor: pointer;
 }
 .output {
     font-weight: 500;
@@ -116,8 +121,12 @@ div.active {
 .data:hover {
     fill: yellow !important;
 }
-#inputs {
+#inputs, #outputs {
     margin: 20px;
+}
+#outputs div {
+    padding: .5em;
+    cursor: pointer;
 }
 #vis-1, #vis-2 {
     min-height: 300px;
@@ -226,13 +235,20 @@ g.gaussian path {
     fill: none;
     shape-rendering: auto;
 }
-g.area path {
+#inputs g.area path {
     fill: #B9D908;
 }
-g.mask path {
+#inputs g.mask path {
     fill: #C17391;
     opacity: 1;
 }
+#outputs g.area path {
+    fill: blue;
+}
+/*#outputs g.mask path {
+    fill: red;
+    opacity: 1;
+}*/
 button#runmodel {
     float: right;
     margin: 2em 2.8em 0 0;
