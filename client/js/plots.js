@@ -71,7 +71,7 @@ plots.output = function(config) {
         return d.gdp_pc_pp; // should be configurable
     })).nice();
     y.domain(d3.extent(domain, function(d) {
-        return d[config.chloropleth_field]; // should be configurable
+        return d[config.chloropleth_field];
     })).nice();
 
     svg.append("g")
@@ -117,19 +117,6 @@ plots.output = function(config) {
         })
         .style("opacity", '.5')
         .on('mousedown', function(d) {
-            // don't select countries with no data
-            if (!d.id) {
-                return;
-            }
-            // clear selection before re-selecting
-            svg.selectAll('circle.dot')
-                .classed('featureselect', false);
-
-            // select the feature
-            var id = d.id;
-            svg.selectAll('circle.dot.' + id)
-                .classed('featureselect', true);
-
             // notify event listeners
             $.event.trigger({
                 type: 'plotselect',
@@ -167,16 +154,14 @@ plots.input = function(input, selectedFeature) {
             obj['name'] = data['name'];
             obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
-            if (selectedFeature){
-                if (data.id == selectedFeature.properties.id){
+            if (selectedFeature) {
+                if (data.id == selectedFeature.properties.id) {
                     var extent = +input.brush.extent()[1].toFixed(5);
                     obj[input.key] = extent;
-                }
-                else {
+                } else {
                     obj[input.key] = data[input.key];
                 }
-            }
-            else {
+            } else {
                 obj[input.key] = data[input.key]; // TODO make this dynamic
             }
             // obj[input.key] = data[input.key];
@@ -269,19 +254,6 @@ plots.input = function(input, selectedFeature) {
         })
         .style("opacity", '.5')
         .on('mousedown', function(d) {
-            // don't select countries with no data
-            if (!d.id) {
-                return;
-            }
-            // clear selection before re-selecting
-            svg.selectAll('circle.dot')
-                .classed('featureselect', false);
-
-            // select the feature
-            var id = d.id;
-            svg.selectAll('circle.dot.' + id)
-                .classed('featureselect', true);
-
             // notify event listeners
             $.event.trigger({
                 type: 'plotselect',
@@ -327,47 +299,55 @@ plots.input = function(input, selectedFeature) {
 // handle feature selection
 plots.featureselect = function(feature) {
     // update output plot
-    var id = feature.properties.id;
-    var svg = d3.select('#output-plot');
-    svg.selectAll('circle')
-        .classed('featureselect', false);
-    svg.selectAll('.' + id)
-        .classed('featureselect', true);
-
-    // update input plot and select current feature
-    var svg = d3.select('#input-plot');
-    svg.selectAll('circle')
-        .classed('featureselect', false);
-    svg.selectAll('.' + id)
-        .classed('featureselect', true);
+    _selectBubble(feature, 'output-plot');
+    _selectBubble(feature, 'input-plot');
 }
 
 // update plots on map selection change
-plots.mapselect = function(map_config) {
+plots.mapselect = function(feature, map_config) {
     plots.output(map_config);
+    _selectBubble(feature, 'output-plot');
+    _selectBubble(feature, 'input-plot');
 }
 
 // redraw the input scatterplot when an input is changed by the user
-plots.inputchanged = function(input, selectedFeature){
+plots.inputchanged = function(input, selectedFeature) {
     // redraw the plot based on the current input
-    var id = selectedFeature.properties.id;
     plots.input(input, selectedFeature);
-    var svg = d3.select('#input-plot');
-    svg.selectAll('circle')
-        .classed('featureselect', false);
-    svg.selectAll('.' + id)
-        .classed('featureselect', true);
+    _selectBubble(selectedFeature, 'input-plot');
 }
 
 // handle selection events on either of the plots
-plots.plotselect = function(feature, model, source){
-    var update = source == 'output-plot' ? 'input-plot' : 'output-plot';
-    // get currently selected bubble if any
-    var selected = d3.select('#' + update + ' circle.featureselect');
-    selected.classed('featureselect', false);
-    // select the newly selected feature
-    var sel = d3.select('#' + update + ' circle.dot.' + model.id);
-    sel.attr("class", "dot " + model.id + " featureselect");
+plots.plotselect = function(feature, source) {
+    var dest = source == 'output-plot' ? 'input-plot' : 'output-plot';
+    _selectBubble(feature, source);
+    var plot = d3.select('#' + dest + ' svg');
+    _selectBubble(feature, dest);
+}
+
+
+_selectBubble = function(feature, source){
+    var id = feature.properties.id;
+    var p = d3.select('#' + source + ' svg');
+    p.selectAll('circle.dot')
+        .classed('featureselect', false);
+    var s1 = p.select('circle.dot.' + id).classed('featureselect', true);
+    n = s1.node();
+    d = s1.datum();
+
+    // var clone = s1.node().cloneNode(true);
+    var s2 = d3.select(n.parentNode.appendChild(
+        n.cloneNode(true), n.nextSibling));
+
+    s2.datum(d)
+        .on('mousedown', function(d) {
+            $.event.trigger({
+                type: 'plotselect',
+                source: source,
+                feature: d
+            })
+        })
+    n.remove();
 }
 
 module.exports = plots;

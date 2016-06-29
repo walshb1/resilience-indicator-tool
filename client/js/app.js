@@ -345,7 +345,7 @@ $(document).on('plotselect', function(event) {
             inputs.featureselect(feature, model);
             outputs.featureselect(feature, model);
             map.featureselect(feature, model);
-            plots.plotselect(feature, model, source);
+            plots.plotselect(feature, source);
         }
     });
 });
@@ -382,7 +382,7 @@ $(document).on('mapselect', function(e) {
     var model = app.state.model[id];
     app.state.selectedOutput = config;
     map.config = app.state.selectedOutput;
-    plots.mapselect(config);
+    plots.mapselect(app.state.selectedFeature, config);
     map.mapselect(app.state.selectedFeature, model);
 });
 

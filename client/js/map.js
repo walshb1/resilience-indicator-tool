@@ -2,7 +2,6 @@ var $ = require('jquery'),
     sprintf = require('sprintf'),
     Q = require('q'),
     d3 = require('d3'),
-    plots = require('./plots'),
     inputs = require('./inputs'),
     topojson = require('topojson');
 require('d3-geo-projection')(d3);
@@ -70,7 +69,7 @@ map.draw = function(config, json, model_data) {
     }
 
     // pull out the model features
-    var model_features = topojson.feature(json, json.objects.model_features).features;
+    var model_features = topojson.feature(json,  json.objects.model_features).features;
 
     // model features
     modelFeatures.selectAll(".feature")
