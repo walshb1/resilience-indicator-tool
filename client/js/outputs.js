@@ -11,6 +11,7 @@ outputs.domains = {};
 
 outputs.getOutputDistributions = function(outputDomains) {
 
+    $('#outputs').empty();
     //  keep a reference to the output domains
     outputs.domains = outputDomains;
 

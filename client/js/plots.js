@@ -30,8 +30,7 @@ plots.output = function(config) {
     $.each(plots.model, function(idx, data) {
         if (data['gdp_pc_pp']) {
             var obj = {};
-            // TODO rename this field in preprocess config
-            obj['name'] = data['province'];
+            obj['name'] = data['name'];
             obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
             obj[config.chloropleth_field] = data[config.chloropleth_field];
@@ -145,7 +144,7 @@ plots.output = function(config) {
 
     if (!selected.empty()) {
         var sel = d3.select('.dot.' + selected.datum().id);
-        sel.attr("class", "featureselect");
+        sel.attr("class", "dot " + selected.datum().id + " featureselect");
     }
 }
 
@@ -165,7 +164,7 @@ plots.input = function(input, selectedFeature) {
     $.each(plots.model, function(idx, data) {
         if (data['gdp_pc_pp']) {
             var obj = {};
-            obj['name'] = data['province'];
+            obj['name'] = data['name'];
             obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
             if (selectedFeature){

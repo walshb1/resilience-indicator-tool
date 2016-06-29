@@ -142,6 +142,10 @@ div.active {
     padding: 1em;
 }
 
+#outputs div:hover {
+    border-bottom: 2px solid #337ab7 !important;
+}
+
 /* inputs */
 
 div#inputs table tr {
