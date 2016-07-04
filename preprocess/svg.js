@@ -57,7 +57,7 @@ _colorScale = function(output, data) {
 }
 
 _applyStyles = function(svg, styles) {
-    for (var style in styles){
+    for (var style in styles) {
         var s = styles[style];
         svg.selectAll('.' + style)
             .call(_styles(s));
@@ -65,12 +65,12 @@ _applyStyles = function(svg, styles) {
 }
 
 _styles = function(styles) {
-   return function(selection) {
-     for (var property in styles) {
-       selection.style(property, styles[property]);
-     }
-   };
- }
+    return function(selection) {
+        for (var property in styles) {
+            selection.style(property, styles[property]);
+        }
+    };
+}
 
 
 generate.svg = function(file, config) {
@@ -108,7 +108,7 @@ generate.svg = function(file, config) {
             var modelFeatures = layerGroup.append("g");
 
             // create layer groups for layers that don't contain model features
-            for (var l in mapdata.objects){
+            for (var l in mapdata.objects) {
                 if (l == 'model_features') continue;
                 var layer = mapdata.objects[l];
                 var data = topojson.feature(mapdata, layer).features;
@@ -119,7 +119,7 @@ generate.svg = function(file, config) {
                     .append("path")
                     .attr("class", function(d) {
                         var style = '';
-                        if (d.properties.hasOwnProperty('Style')){
+                        if (d.properties.hasOwnProperty('Style')) {
                             style = d.properties.Style.replace(/ /g, '_').toLowerCase();
                         }
                         return l + ' ' + style;
@@ -131,7 +131,7 @@ generate.svg = function(file, config) {
             modelFeatures.selectAll(".feature")
                 .data(model_features)
                 .enter().append("path")
-                .attr("id", function(d){
+                .attr("id", function(d) {
                     return d.properties.id;
                 })
                 .attr("class", function(d) {
