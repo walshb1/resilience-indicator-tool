@@ -326,6 +326,7 @@ plots.plotselect = function(feature, source) {
 }
 
 
+// select a bubble on one of the plots
 _selectBubble = function(feature, source){
     var id = feature.properties.id;
     var p = d3.select('#' + source + ' svg');
@@ -335,7 +336,6 @@ _selectBubble = function(feature, source){
     n = s1.node();
     d = s1.datum();
 
-    // var clone = s1.node().cloneNode(true);
     var s2 = d3.select(n.parentNode.appendChild(
         n.cloneNode(true), n.nextSibling));
 

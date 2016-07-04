@@ -71,8 +71,46 @@ config = {
         // svg styles
         "styles": {
             "nodata": {
+                "fill": "#CCC"
+            },
+            "coastlines": {
+                "fill": "none",
+                "stroke": "#666",
+                "stroke-width": ".2px",
+                "stroke-linejoin": "miter"
+            },
+            "international_boundaries": {
+                "fill": "none",
+                "stroke": "#666",
+                "stroke-width": ".2px",
+                "stroke-linejoin": "miter"
+            },
+            "disputed_boundaries": {
+                "fill": "none"
+            },
+            "disputed_areas":{
                 "fill": "#E0E0E0"
             },
+            "dotted_line": {
+                "fill": "none",
+                "stroke": "#666",
+                "stroke-width": ".2px",
+                "stroke-dasharray": ".8, .8",
+                "stroke-linejoin": "miter"
+            },
+            "dashed_line": {
+                "fill": "none",
+                "stroke": "#666",
+                "stroke-width": ".2px",
+                "stroke-dasharray": ".1, .8",
+            },
+            "tightly_dashed_line": {
+                "fill": "none",
+                "stroke": "#666",
+                "stroke-width": ".2px",
+                "stroke-dasharray": "1.5, .5",
+                "stroke-linejoin": "miter"
+            }
         }
     },
     // the topojson output filename

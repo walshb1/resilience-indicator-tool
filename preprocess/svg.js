@@ -56,6 +56,23 @@ _colorScale = function(output, data) {
     return colors; //return the color scale generator
 }
 
+_applyStyles = function(svg, styles) {
+    for (var style in styles){
+        var s = styles[style];
+        svg.selectAll('.' + style)
+            .call(_styles(s));
+    }
+}
+
+_styles = function(styles) {
+   return function(selection) {
+     for (var property in styles) {
+       selection.style(property, styles[property]);
+     }
+   };
+ }
+
+
 generate.svg = function(file, config) {
 
     var d = Q.defer();
@@ -63,6 +80,7 @@ generate.svg = function(file, config) {
     var width = config.map.width;
     var height = config.map.height;
     var outputs = config.outputs;
+    var styles = config.svg.styles;
     var svgs = [];
 
     scripts = [
@@ -89,16 +107,36 @@ generate.svg = function(file, config) {
             var layerGroup = svg.append("g");
             var modelFeatures = layerGroup.append("g");
 
+            // create layer groups for layers that don't contain model features
+            for (var l in mapdata.objects){
+                if (l == 'model_features') continue;
+                var layer = mapdata.objects[l];
+                var data = topojson.feature(mapdata, layer).features;
+                var lg = layerGroup.append("g");
+                lg.selectAll('.' + l)
+                    .data(data)
+                    .enter()
+                    .append("path")
+                    .attr("class", function(d) {
+                        var style = '';
+                        if (d.properties.hasOwnProperty('Style')){
+                            style = d.properties.Style.replace(/ /g, '_').toLowerCase();
+                        }
+                        return l + ' ' + style;
+                    })
+                    .attr("d", path);
+            }
+
             // model features
             modelFeatures.selectAll(".feature")
                 .data(model_features)
                 .enter().append("path")
                 .attr("id", function(d){
-                    return d.properties.iso;
+                    return d.properties.id;
                 })
                 .attr("class", function(d) {
                     // TODO needs to be generalized
-                    var cls = d.properties.province == null ? 'nodata' : 'data';
+                    var cls = d.properties.id == null ? 'nodata' : 'data';
                     return sprintf("feature %s", cls);
                 })
                 .style("fill", function(d) {
@@ -118,6 +156,9 @@ generate.svg = function(file, config) {
             }
             // set the xmlns attribute on the root node
             node.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+            _applyStyles(svg, styles);
+
             var filename = output + '.svg';
             svgs.push(filename);
             fs.writeFileSync(filename, node.outerHTML);
