@@ -233,6 +233,11 @@ app.init = function() {
     $('button#runmodel').on('click', function(e) {
         app.runmodel();
     });
+
+    // reset the model to its initial state
+    $('button#resetmodel').on('click', function(e){
+        app.resetmodel();
+    })
 }
 
 // draw the UI
@@ -279,7 +284,6 @@ app.updateUI = function(data) {
         $('#spinner').css('display', 'none');
         $('#mask').css('opacity', '1');
     });
-
 }
 
 // run the model
@@ -319,6 +323,16 @@ app.runmodel = function() {
     })
     .fail(function(err){
         console.log(err);
+    });
+}
+
+app.resetmodel = function(){
+    $('#spinner span').html('');
+    $('#spinner').css('display', 'block');
+    $('#mask').css('opacity', '.2');
+    app.drawUI().then(function() {
+        $('#spinner').css('display', 'none');
+        $('#mask').css('opacity', '1');
     });
 }
 

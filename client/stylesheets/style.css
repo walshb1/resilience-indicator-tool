@@ -267,5 +267,10 @@ g.gaussian path {
 }*/
 button#runmodel {
     float: right;
-    margin: 2em 2.8em 0 0;
+    margin: 0em 0em 0 0;
+}
+
+button#resetmodel {
+    float: left;
+    margin: 0em;
 }
