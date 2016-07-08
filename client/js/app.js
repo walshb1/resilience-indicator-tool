@@ -330,9 +330,17 @@ app.resetmodel = function(){
     $('#spinner span').html('');
     $('#spinner').css('display', 'block');
     $('#mask').css('opacity', '.2');
-    app.drawUI().then(function() {
-        $('#spinner').css('display', 'none');
-        $('#mask').css('opacity', '1');
+    _loadInitialData().then(function() {
+        var p = app.drawUI();
+        p.then(function() {
+            console.log('UI Finished');
+            $("#spinner").css('display', 'none');
+            $('#mask').css('opacity', '1');
+            // $('#ui').css('visibility', 'visible');
+        });
+    })
+    .fail(function(err){
+        console.log(err);
     });
 }
 
@@ -350,7 +358,7 @@ $(document).on('featureselect', function(event) {
     app.state.selectedFeature = feature;
     inputs.featureselect(feature, model, initialModel);
     outputs.featureselect(feature, model, initialModel);
-    plots.featureselect(feature, model);
+    plots.featureselect(feature, initialModel);
     map.featureselect(feature, model);
 });
 

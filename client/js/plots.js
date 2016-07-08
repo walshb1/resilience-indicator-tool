@@ -129,6 +129,32 @@ plots.output = function(config) {
             return d.name + ", Pop:" + d.pop;
         });
 
+    // if (initialModel) {
+    //     var d = initialModel;
+    //     svg.append('circle')
+    //         .attr('class', function() {
+    //             return 'initial ' + initialModel.id;
+    //         })
+    //         .attr("r", function() {
+    //             return Math.floor(Math.log(d.pop));
+    //         })
+    //         .attr("cx", function() {
+    //             return x(d.gdp_pc_pp);
+    //         })
+    //         .attr("cy", function() {
+    //             return y(d[input.key]);
+    //         })
+    //         .style({
+    //             'fill': 'lightgrey',
+    //             'stroke-width': '2px',
+    //             'stroke': 'darkgrey'
+    //         })
+    //         .style("opacity", '1')
+    //         .on('mouseover', function() {
+    //             console.log('initial-' + d.id);
+    //         });
+    // }
+
     if (!selected.empty()) {
         var sel = d3.select('.dot.' + selected.datum().id);
         sel.attr("class", "dot " + selected.datum().id + " featureselect");
