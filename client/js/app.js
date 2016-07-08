@@ -27,6 +27,8 @@ _loadInitialData = function() {
             app.state.inputInfo = results[1];
             app.state.inputDomains = _populateInputDomains(results[1]);
             app.state.selectedFeature = _getDefaultFeature();
+            app.state.current_input = app.state.config.default_input;
+            app.state.current_output = app.state.config.default_output;
             d.resolve();
         });
     return d.promise;
@@ -326,6 +328,7 @@ app.runmodel = function() {
     });
 }
 
+// resets the model and ui to initial state
 app.resetmodel = function(){
     $('#spinner span').html('');
     $('#spinner').css('display', 'block');
@@ -333,7 +336,7 @@ app.resetmodel = function(){
     _loadInitialData().then(function() {
         var p = app.drawUI();
         p.then(function() {
-            console.log('UI Finished');
+            console.log('Model reset');
             $("#spinner").css('display', 'none');
             $('#mask').css('opacity', '1');
             // $('#ui').css('visibility', 'visible');
@@ -353,12 +356,14 @@ $(document).ready(function() {
 // handle featureselection events on map
 $(document).on('featureselect', function(event) {
     var feature = event.feature;
+    var output = app.state.current_output;
+    var input = app.state.current_input;
     var model = app.state.model[feature.properties.id];
     var initialModel = app.state.initialModel[feature.properties.id];
     app.state.selectedFeature = feature;
     inputs.featureselect(feature, model, initialModel);
     outputs.featureselect(feature, model, initialModel);
-    plots.featureselect(feature, initialModel);
+    plots.featureselect(feature, initialModel, input, output);
     map.featureselect(feature, model);
 });
 
@@ -385,6 +390,8 @@ $(document).on('mapselect', function(e) {
     // update the map config
     var chloropleth_field = e.chloropleth_field,
         chloropleth_title = e.chloropleth_title;
+
+    app.state.current_output = chloropleth_field;
 
     // update map div active styles
     $('.sm-map img').removeClass('active');
@@ -420,6 +427,7 @@ $(document).on('mapselect', function(e) {
 $(document).on('inputchanged', function(event) {
     var feature = app.state.selectedFeature;
     var initialModel = app.state.initialModel[feature.properties.id];
+    app.state.current_input = event.input.key;
     plots.inputchanged(event.input, feature, initialModel);
 });
 

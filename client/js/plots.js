@@ -2,6 +2,15 @@ var d3 = require('d3'),
     Q = require('q'),
     $ = require('jquery');
 
+var margin = {
+        top: 20,
+        right: 10,
+        bottom: 20,
+        left: 10
+    },
+    width = 450 - margin.left - margin.right,
+    height = 350 - margin.top - margin.bottom;
+
 
 var plots = {};
 
@@ -17,14 +26,14 @@ plots.output = function(config) {
     $('#output-plot svg').empty();
     $('#output-bubble-title').html(config.chloropleth_title);
 
-    var margin = {
-            top: 20,
-            right: 10,
-            bottom: 20,
-            left: 10
-        },
-        width = 450 - margin.left - margin.right,
-        height = 350 - margin.top - margin.bottom;
+    // var margin = {
+    //         top: 20,
+    //         right: 10,
+    //         bottom: 20,
+    //         left: 10
+    //     },
+    //     width = 450 - margin.left - margin.right,
+    //     height = 350 - margin.top - margin.bottom;
 
     var domain = [];
     $.each(plots.model, function(idx, data) {
@@ -164,14 +173,15 @@ plots.output = function(config) {
 plots.input = function(input, selectedFeature, initialModel) {
     // clear plot before redrawing
     $('#input-plot svg').empty();
-    var margin = {
-            top: 20,
-            right: 10,
-            bottom: 20,
-            left: 10
-        },
-        width = 450 - margin.left - margin.right,
-        height = 350 - margin.top - margin.bottom;
+
+    // var margin = {
+    //         top: 20,
+    //         right: 10,
+    //         bottom: 20,
+    //         left: 10
+    //     },
+    //     width = 450 - margin.left - margin.right,
+    //     height = 350 - margin.top - margin.bottom;
 
     var domain = [];
     $.each(plots.model, function(idx, data) {
@@ -350,10 +360,10 @@ plots.input = function(input, selectedFeature, initialModel) {
 }
 
 // handle feature selection
-plots.featureselect = function(feature, initialModel) {
+plots.featureselect = function(feature, initialModel, input, output) {
     // update output plot
-    _selectBubble(feature, 'output-plot', initialModel);
-    _selectBubble(feature, 'input-plot', initialModel);
+    _selectBubble(feature, 'output-plot', initialModel, output);
+    _selectBubble(feature, 'input-plot', initialModel, input);
 }
 
 // update plots on map selection change
@@ -380,7 +390,7 @@ plots.plotselect = function(feature, source, initial) {
 
 
 // select a bubble on one of the plots
-_selectBubble = function(feature, source, initialModel) {
+_selectBubble = function(feature, source, initialModel, key) {
 
     var id = feature.properties.id;
     var p = d3.select('#' + source + ' svg');
@@ -393,19 +403,49 @@ _selectBubble = function(feature, source, initialModel) {
     if (initialModel) {
         d3.selectAll('#' + source + ' circle.initial').remove();
         // add the initial feature marker
-        var ini = d3.select(n.parentNode.appendChild(
-            n.cloneNode(true), n.nextSibling));
+        // var ini = d3.select(n.parentNode.appendChild(
+        //     n.cloneNode(true), n.nextSibling));
+        //
+        // ini.attr('class', 'initial')
+        //     .style({
+        //         'fill': 'lightgrey',
+        //         'stroke': 'black'
+        //     })
+        //
+        // ini.datum(d)
+        //     .on('mouseover', function(d) {
+        //         console.log('ini mouseover');
+        //     });
+        var x = d3.scale.linear()
+            .range([0, width]);
 
-        ini.attr('class', 'initial')
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        var d = initialModel;
+
+        p.append('circle')
+            .attr('class', function() {
+                return 'initial ' + d.id;
+            })
+            .attr("r", function() {
+                return Math.floor(Math.log(d.pop));
+            })
+            .attr("cx", function() {
+                return x(d.gdp_pc_pp);
+            })
+            .attr("cy", function() {
+                return y(d[key]);
+            })
             .style({
                 'fill': 'lightgrey',
-                'stroke': 'black'
+                'stroke-width': '2px',
+                'stroke': 'darkgrey'
             })
-
-        ini.datum(d)
-            .on('mouseover', function(d) {
-                console.log('ini mouseover');
-            });
+            .style("opacity", '1')
+            .on('mouseover', function() {
+                console.log('initial-' + d.id);
+            })
     }
 
     var s2 = d3.select(n.parentNode.appendChild(
