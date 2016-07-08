@@ -162,9 +162,16 @@ svg {
 div#inputs, #inputs div, #inputs table, #inputs path, #inputs g.brush {
     pointer-events: none;
 }
+#inputs g.brush rect.extent {
+    cursor: default !important;
+}
+
+/*#inputs g.brush g.resize.e {
+    pointer-events: all;
+}*/
+
 #inputs svg {
     pointer-events: all;
-    /*border-bottom: 1px solid lightgrey;*/
 }
 .selecting rect {
     fill: orange;
@@ -197,6 +204,11 @@ g.tick> text {
 .brush .extent {
     fill-opacity: 0;
     shape-rendering: crispEdges;
+}
+.initial line {
+    fill: none;
+    stroke: #2f4f4f;
+    stroke-width: 2px;
 }
 .table {
     margin-bottom: .2em !important;

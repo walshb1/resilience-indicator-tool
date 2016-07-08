@@ -135,7 +135,7 @@ plots.output = function(config) {
     }
 }
 
-plots.input = function(input, selectedFeature) {
+plots.input = function(input, selectedFeature, initialModel) {
     // clear plot before redrawing
     $('#input-plot svg').empty();
     var margin = {
@@ -266,6 +266,33 @@ plots.input = function(input, selectedFeature) {
             return d.name + ", Pop: " + Math.floor(d.pop);
         });
 
+    if (initialModel) {
+        var d = initialModel;
+        svg.append('circle')
+            .attr('class', function() {
+                return 'initial ' + initialModel.id;
+            })
+            .attr("r", function() {
+                return Math.floor(Math.log(d.pop));
+            })
+            .attr("cx", function() {
+                return x(d.gdp_pc_pp);
+            })
+            .attr("cy", function() {
+                return y(d[input.key]);
+            })
+            .style({
+                'fill': 'lightgrey',
+                'stroke-width': '2px',
+                'stroke': 'darkgrey'
+            })
+            .style("opacity", '1')
+            .on('mouseover', function() {
+                console.log('initial-' + d.id);
+            })
+    }
+
+
     var title = input.descriptor;
     $('#input-bubble-title').html(title);
 
@@ -297,10 +324,10 @@ plots.input = function(input, selectedFeature) {
 }
 
 // handle feature selection
-plots.featureselect = function(feature) {
+plots.featureselect = function(feature, initialModel) {
     // update output plot
-    _selectBubble(feature, 'output-plot');
-    _selectBubble(feature, 'input-plot');
+    _selectBubble(feature, 'output-plot', initialModel);
+    _selectBubble(feature, 'input-plot', initialModel);
 }
 
 // update plots on map selection change
@@ -311,23 +338,24 @@ plots.mapselect = function(feature, map_config) {
 }
 
 // redraw the input scatterplot when an input is changed by the user
-plots.inputchanged = function(input, selectedFeature) {
+plots.inputchanged = function(input, selectedFeature, initialModel) {
     // redraw the plot based on the current input
-    plots.input(input, selectedFeature);
+    plots.input(input, selectedFeature, initialModel);
     _selectBubble(selectedFeature, 'input-plot');
 }
 
 // handle selection events on either of the plots
-plots.plotselect = function(feature, source) {
+plots.plotselect = function(feature, source, initial) {
     var dest = source == 'output-plot' ? 'input-plot' : 'output-plot';
-    _selectBubble(feature, source);
+    _selectBubble(feature, source, initial);
     var plot = d3.select('#' + dest + ' svg');
-    _selectBubble(feature, dest);
+    _selectBubble(feature, dest, initial);
 }
 
 
 // select a bubble on one of the plots
-_selectBubble = function(feature, source){
+_selectBubble = function(feature, source, initialModel) {
+
     var id = feature.properties.id;
     var p = d3.select('#' + source + ' svg');
     p.selectAll('circle.dot')
@@ -335,6 +363,24 @@ _selectBubble = function(feature, source){
     var s1 = p.select('circle.dot.' + id).classed('featureselect', true);
     n = s1.node();
     d = s1.datum();
+
+    if (initialModel) {
+        d3.selectAll('#' + source + ' circle.initial').remove();
+        // add the initial feature marker
+        var ini = d3.select(n.parentNode.appendChild(
+            n.cloneNode(true), n.nextSibling));
+
+        ini.attr('class', 'initial')
+            .style({
+                'fill': 'lightgrey',
+                'stroke': 'black'
+            })
+
+        ini.datum(d)
+            .on('mouseover', function(d) {
+                console.log('ini mouseover');
+            });
+    }
 
     var s2 = d3.select(n.parentNode.appendChild(
         n.cloneNode(true), n.nextSibling));
@@ -347,7 +393,9 @@ _selectBubble = function(feature, source){
                 feature: d
             })
         })
+
     n.remove();
 }
+
 
 module.exports = plots;

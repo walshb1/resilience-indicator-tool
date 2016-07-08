@@ -172,6 +172,12 @@ outputs.getOutputDistributions = function(outputDomains) {
             })
             .style("fill", "url(#gradient-" + idx + ")");
 
+        // add placeholder for initial model value
+        var initial = svg.append("g")
+            .attr("id", 'initial-' + idx)
+            .attr("class", "initial")
+            .append('line');
+
         var brush = d3.svg.brush()
             .x(x)
             .extent([0, d3.mean(data)])
@@ -181,6 +187,8 @@ outputs.getOutputDistributions = function(outputDomains) {
 
         // keep a reference to the brush for the output domain
         outputs.domains[idx].brush = brush;
+        outputs.domains[idx].x = x;
+        outputs.domains[idx].height = height;
 
         var line = d3.svg.line()
             .x(function(d) {
@@ -242,10 +250,21 @@ outputs.getOutputDistributions = function(outputDomains) {
  * Update output extents when feature selected
  * on either map or output plot
  */
-outputs.update = function(model) {
+outputs.update = function(model, initial) {
     var domains = outputs.domains;
     for (var domain in domains) {
         if (domains.hasOwnProperty(domain)) {
+            var ini = d3.select('svg#' + domain + ' g.initial line');
+            var x = domains[domain].x;
+            var height = domains[domain].height;
+            ini.attr("x1", function(d){
+                    return x(+initial[domain]);
+                })
+                .attr('y1', 0)
+                .attr('x2', function(d){
+                    return x(+initial[domain]);
+                })
+                .attr('y2', height);
             // get the input config
             var brush = domains[domain].brush;
             // get the value of the current input from the model
@@ -267,11 +286,11 @@ outputs.update = function(model) {
 /*
  * Handle feature selection events.
  */
-outputs.featureselect = function(feature, model) {
+outputs.featureselect = function(feature, model, initial) {
     var props = feature.properties;
     var id = props.id;
     //$('span#selected-feature').html(props.name);
-    outputs.update(model);
+    outputs.update(model, initial);
 }
 
 module.exports = outputs;

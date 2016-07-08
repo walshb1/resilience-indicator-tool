@@ -261,6 +261,9 @@ app.drawUI = function() {
                 input: input
             });
             d.resolve();
+        })
+        .fail(function(err){
+            console.log(err);
         });
     return d.promise;
 }
@@ -313,6 +316,9 @@ app.runmodel = function() {
             type: 'runmodel',
             modelData: obj
         });
+    })
+    .fail(function(err){
+        console.log(err);
     });
 }
 
@@ -326,9 +332,10 @@ $(document).ready(function() {
 $(document).on('featureselect', function(event) {
     var feature = event.feature;
     var model = app.state.model[feature.properties.id];
+    var initialModel = app.state.initialModel[feature.properties.id];
     app.state.selectedFeature = feature;
-    inputs.featureselect(feature, model);
-    outputs.featureselect(feature, model);
+    inputs.featureselect(feature, model, initialModel);
+    outputs.featureselect(feature, model, initialModel);
     plots.featureselect(feature, model);
     map.featureselect(feature, model);
 });
@@ -342,10 +349,11 @@ $(document).on('plotselect', function(event) {
         if (f.id == props.id) {
             app.state.selectedFeature = feature;
             var model = app.state.model[props.id];
-            inputs.featureselect(feature, model);
-            outputs.featureselect(feature, model);
+            var initialModel = app.state.initialModel[feature.properties.id];
+            inputs.featureselect(feature, model, initialModel);
+            outputs.featureselect(feature, model, initialModel);
             map.featureselect(feature, model);
-            plots.plotselect(feature, source);
+            plots.plotselect(feature, source, initialModel);
         }
     });
 });
@@ -388,7 +396,9 @@ $(document).on('mapselect', function(e) {
 
 // handle input slider changed events
 $(document).on('inputchanged', function(event) {
-    plots.inputchanged(event.input, app.state.selectedFeature);
+    var feature = app.state.selectedFeature;
+    var initialModel = app.state.initialModel[feature.properties.id];
+    plots.inputchanged(event.input, feature, initialModel);
 });
 
 // handle runmodel events

@@ -36,8 +36,9 @@ inputs.getSliders = function(inputConfig) {
                 right: 0,
                 bottom: 0,
                 left: 0
-            },
-            width = 120 - margin.left - margin.right,
+            }
+
+        var width = 120 - margin.left - margin.right,
             height = 30 - margin.top - margin.bottom;
 
         var kde = science.stats.kde().sample(data);
@@ -62,7 +63,8 @@ inputs.getSliders = function(inputConfig) {
             })
             .y(function(d) {
                 return y(d[1]);
-            });
+            })
+            .interpolate("basis");
 
         // area under gaussian curve
         var a = d3.svg.area()
@@ -72,7 +74,7 @@ inputs.getSliders = function(inputConfig) {
             .y0(height)
             .y1(function(d) {
                 return y(d[1]);
-            });
+            })
 
         // bisect data array at brush selection point
         b = d3.bisector(function(d) {
@@ -102,12 +104,17 @@ inputs.getSliders = function(inputConfig) {
 
         var td = tr.append("td")
             .attr('width', '35%');
+
         var svg = td.append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .attr("id", input.key)
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .on('click', function(e){
+                console.log(e);
+            });
+
         // add gaussian curve
         var gaus = svg.append("g")
             .attr("id", input.key)
@@ -133,12 +140,19 @@ inputs.getSliders = function(inputConfig) {
             .enter()
             .append("path")
             .attr("d", function(d) {
-                return a(kde.bandwidth(d)(data));
+                var dd = kde.bandwidth(d)(data);
+                return a(dd);
             });
 
         var mask = svg.append("g")
             .attr("id", 'mask-' + input.key)
             .attr("class", "mask");
+
+        // add placeholder for initial model value
+        var initial = svg.append("g")
+            .attr("id", 'initial-' + input.key)
+            .attr("class", "initial")
+            .append('line');
 
         var brush = d3.svg.brush()
             .x(x)
@@ -150,7 +164,11 @@ inputs.getSliders = function(inputConfig) {
         // add the brush to the input config so
         // we can access it later
         input.brush = brush;
+        input.x = x;
+        input.width = width;
+        input.height = height;
         _config[input.key] = input;
+
 
         var line = d3.svg.line()
             .x(function(d) {
@@ -170,7 +188,6 @@ inputs.getSliders = function(inputConfig) {
             .duration(750)
             .call(brush.extent([0, d3.mean(data)]))
             .call(brush.event);
-
 
         brushg.selectAll("g.resize.w").remove();
 
@@ -217,6 +234,12 @@ inputs.getSliders = function(inputConfig) {
                 // source is a MouseEvent
                 // user is updating the input manually
                 var node = d3.select(d3.event.sourceEvent.target).node();
+                if (node.nodeName == 'svg'){
+                    console.log('got svg');
+                }
+                else{
+                    console.log(node.nodeName);
+                }
                 var id = node.id;
                 // redraw the input plot
                 if (id) {
@@ -245,12 +268,24 @@ inputs.redrawInputPlot = function(key) {
  * Update input extents when feature selected
  * on either map or output plot
  */
-inputs.update = function(model) {
+inputs.update = function(model, initial) {
     var config = inputs.getConfig();
     for (var conf in config) {
         if (config.hasOwnProperty(conf)) {
-            // get the input config
+            var ini = d3.select('svg#' + conf + ' g.initial line');
+            // remove existing initial marker
+            //ini.select('line').remove();
             var input = config[conf];
+            ini.attr("x1", function(d){
+                    return input.x(+initial[conf]);
+                })
+                .attr('y1', 0)
+                .attr('x2', function(d){
+                    return input.x(+initial[conf]);
+                })
+                .attr('y2', input.height);
+            // get the input config
+
             var brush = input.brush;
             // get the value of the current input from the model
             // and update the brush extent
@@ -290,11 +325,11 @@ inputs.getInputValues = function() {
 /*
  * Handle feature selection events.
  */
-inputs.featureselect = function(feature, model) {
+inputs.featureselect = function(feature, model, initial) {
     var props = feature.properties;
     var id = props.id;
     $('span#selected-feature').html(props.name);
-    inputs.update(model);
+    inputs.update(model, initial);
 }
 
 module.exports = inputs;
