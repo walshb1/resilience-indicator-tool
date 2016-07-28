@@ -124,9 +124,17 @@ div.active {
 #inputs, #outputs {
     margin: 20px;
 }
+#inputs div {
+    padding: .2em;
+}
 #outputs div {
     padding: .5em;
     cursor: pointer;
+}
+#inputs div.current-input {
+    background-color: rgba(211, 211, 211, 0.3);
+    border: 1px solid rgba(211, 211, 211, 0.8);
+    border-radius: 4px;
 }
 #vis-1, #vis-2 {
     min-height: 300px;

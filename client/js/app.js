@@ -282,12 +282,6 @@ app.drawUI = function() {
                 type: "featureselect",
                 feature: feature
             });
-            // // trigger default input selection change
-            // var input = inputs.getConfig()[app.state.config.default_input];
-            // $.event.trigger({
-            //     type: "inputchanged",
-            //     input: input
-            // });
             d.resolve();
         })
         .fail(function(err) {
@@ -363,6 +357,12 @@ app.resetmodel = function() {
     _loadInitialData().then(function() {
             var p = app.drawUI();
             p.then(function() {
+                // trigger default input selection change
+                var input = inputs.getConfig()[app.state.config.default_input];
+                $.event.trigger({
+                    type: "inputchanged",
+                    input: input
+                });
                 console.log('Model reset');
                 $("#spinner").css('display', 'none');
                 $('#mask').css('opacity', '1');
@@ -458,6 +458,9 @@ $(document).on('mapselect', function(e) {
 
 // handle input slider changed events
 $(document).on('inputchanged', function(event) {
+    var input = event.input;
+    $('#inputs div.current-input').removeClass('current-input');
+    $('#table-' + input.key ).parent().addClass('current-input');
     var feature = app.state.selectedFeature;
     var initialModel = app.state.initialModel;
     app.state.current_input = event.input.key;
