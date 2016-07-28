@@ -76,11 +76,13 @@ plots.output = function(config) {
 
     var xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom");
+        .orient("bottom")
+        .ticks(5);
 
     var yAxis = d3.svg.axis()
         .scale(y)
-        .orient("left");
+        .orient("left")
+        .ticks(5);
 
     svg.selectAll(".dot")
         .data(domain)
@@ -179,11 +181,13 @@ plots.input = function(input, selectedFeature, initialModel) {
 
     var xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom");
+        .orient("bottom")
+        .ticks(5);
 
     var yAxis = d3.svg.axis()
         .scale(y)
-        .orient("left");
+        .orient("left")
+        .ticks(5);
 
     var svg = d3.select("#input-plot svg")
         .attr("width", width + margin.left + margin.right)
@@ -266,7 +270,7 @@ plots.input = function(input, selectedFeature, initialModel) {
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text(input.descriptor) // TODO: set dynamically
+        .text(input.descriptor);
 
     /*
     var legend = svg.selectAll(".legend")
