@@ -1,5 +1,9 @@
     {
     "outputs": {
+        "risk_to_assets": {
+            "descriptor": "Risk to assets",
+            "gradient": ["#f1eef6", "#045a8d"]
+        },
         "resilience": {
             "descriptor": "Resilience",
             "gradient": ["#bd0026", "#ffffb2"]
@@ -7,10 +11,6 @@
         "risk": {
             "descriptor": "Risk",
             "gradient": ["#feebe2", "#7a0177"]
-        },
-        "risk_to_assets": {
-            "descriptor": "Risk to assets",
-            "gradient": ["#f1eef6", "#045a8d"]
         }
     },
     "inputs": ["axfin_p", "axfin_r", "axhealth", "finance_pre",
