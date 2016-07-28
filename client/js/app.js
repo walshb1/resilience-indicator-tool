@@ -227,7 +227,13 @@ app.init = function() {
     _loadInitialData().then(function() {
         var p = app.drawUI();
         p.then(function() {
-            console.log('UI Finished');
+            // trigger default input selection change
+            var input = inputs.getConfig()[app.state.config.default_input];
+            $.event.trigger({
+                type: "inputchanged",
+                input: input
+            });
+            console.log('UI Ready');
             $("#spinner").css('display', 'none');
             $('#ui').css('visibility', 'visible');
         });
@@ -276,12 +282,12 @@ app.drawUI = function() {
                 type: "featureselect",
                 feature: feature
             });
-            // trigger default input selection change
-            var input = inputs.getConfig()[app.state.config.default_input];
-            $.event.trigger({
-                type: "inputchanged",
-                input: input
-            });
+            // // trigger default input selection change
+            // var input = inputs.getConfig()[app.state.config.default_input];
+            // $.event.trigger({
+            //     type: "inputchanged",
+            //     input: input
+            // });
             d.resolve();
         })
         .fail(function(err) {
@@ -298,6 +304,12 @@ app.updateUI = function(data) {
     app.state.outputDomains = _populateOutputDomains();
     app.state.inputDomains = _populateInputDomains(app.state.inputInfo);
     app.drawUI().then(function() {
+        // trigger default input selection change
+        var input = inputs.getConfig()[app.state.current_input];
+        $.event.trigger({
+            type: "inputchanged",
+            input: input
+        });
         $('#spinner').css('display', 'none');
         $('#mask').css('opacity', '1');
     });
@@ -374,7 +386,6 @@ $(document).on('featureselect', function(event) {
     var output = app.state.current_output;
     var input = app.state.current_input;
     var model = app.state.model[feature.properties.id];
-    // var initialModel = app.state.initialModel[feature.properties.id];
     var initialModel = app.state.initialModel;
     app.state.selectedFeature = feature;
     inputs.featureselect(feature, model, initialModel);
