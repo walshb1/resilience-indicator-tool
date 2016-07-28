@@ -460,7 +460,8 @@ $(document).on('mapselect', function(e) {
 $(document).on('inputchanged', function(event) {
     var input = event.input;
     $('#inputs div.current-input').removeClass('current-input');
-    $('#table-' + input.key ).parent().addClass('current-input');
+    $('#table-' + input.key).parent().addClass('current-input');
+    $('#table-' + input.key + ' span.icon').addClass('glyphicon glyphicon-chevron-right');
     var feature = app.state.selectedFeature;
     var initialModel = app.state.initialModel;
     app.state.current_input = event.input.key;

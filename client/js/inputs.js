@@ -32,11 +32,11 @@ inputs.getSliders = function(inputConfig) {
         bounds = d3.extent(data);
 
         var margin = {
-                top: 5,
-                right: 0,
-                bottom: 0,
-                left: 0
-            }
+            top: 5,
+            right: 0,
+            bottom: 0,
+            left: 0
+        }
 
         var width = 120 - margin.left - margin.right,
             height = 30 - margin.top - margin.bottom;
@@ -90,20 +90,25 @@ inputs.getSliders = function(inputConfig) {
             .attr("id", "table-" + input.key)
             .append("tr");
 
+        // tr.append("td")
+        //     .attr('width', '5%')
+        //     .append('span')
+        //     .attr("class", "icon");
+
         tr.append("td")
-            .attr('width', '45%')
+            .attr('width', '55%')
             .append('span')
             .attr("class", "descriptor")
             .text(input.descriptor);
 
         tr.append("td")
-            .attr('width', '20%')
+            .attr('width', '15%')
             .append('span')
             .attr("class", "value")
             .text(' ');
 
         var td = tr.append("td")
-            .attr('width', '35%');
+            .attr('width', '30%');
 
         var svg = td.append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -111,7 +116,7 @@ inputs.getSliders = function(inputConfig) {
             .attr("id", input.key)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .on('click', function(e){
+            .on('click', function(e) {
                 console.log(e);
             });
 
@@ -234,10 +239,9 @@ inputs.getSliders = function(inputConfig) {
                 // source is a MouseEvent
                 // user is updating the input manually
                 var node = d3.select(d3.event.sourceEvent.target).node();
-                if (node.nodeName == 'svg'){
+                if (node.nodeName == 'svg') {
                     console.log('got svg');
-                }
-                else{
+                } else {
                     console.log(node.nodeName);
                 }
                 var id = node.id;
@@ -276,11 +280,11 @@ inputs.update = function(model, initial) {
             // remove existing initial marker
             //ini.select('line').remove();
             var input = config[conf];
-            ini.attr("x1", function(d){
+            ini.attr("x1", function(d) {
                     return input.x(+initial[conf]);
                 })
                 .attr('y1', 0)
-                .attr('x2', function(d){
+                .attr('x2', function(d) {
                     return input.x(+initial[conf]);
                 })
                 .attr('y2', input.height);

@@ -136,6 +136,9 @@ div.active {
     border: 1px solid rgba(211, 211, 211, 0.8);
     border-radius: 4px;
 }
+span.icon {
+    vertical-align: middle;
+}
 #vis-1, #vis-2 {
     min-height: 300px;
     width: auto;
@@ -146,7 +149,7 @@ div.active {
     font-size: small;
     font-weight: 550;
 }
-#ouput-plot svg, #input-plot svg {
+#output-plot svg, #input-plot svg {
     padding: 1em;
 }
 
@@ -161,7 +164,7 @@ div#inputs table tr {
 }
 
 span.descriptor {
-    margin: .5em 1.5em 0 0;
+    margin: .5em 1.5em 0 .2em;
     float: left;
 }
 svg {
