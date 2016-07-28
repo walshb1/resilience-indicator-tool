@@ -459,12 +459,8 @@ $(document).on('mapselect', function(e) {
 // handle input slider changed events
 $(document).on('inputchanged', function(event) {
     var input = event.input;
-    $('#table-' + input.key).parent().css({
-        'background-color':'rgba(211, 211, 211, 0.3)',
-        'border':'1px solid rgba(211, 211, 211, 0.8)',
-        'border-radius': '4px'
-        }
-    );
+    $('#inputs div').removeClass('current-input');
+    $('#table-' + input.key).parent().addClass('current-input');
     var feature = app.state.selectedFeature;
     var initialModel = app.state.initialModel;
     app.state.current_input = event.input.key;
