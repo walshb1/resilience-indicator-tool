@@ -182,6 +182,7 @@ _drawMap = function() {
 
 // get the map rendering configuration
 _renderConfig = function(chloropleth_field, chloropleth_title) {
+    var config = app.state.config;
     var w = app.state.config.map.width;
     var h = app.state.config.map.height;
     if (chloropleth_field && chloropleth_title) {
@@ -197,13 +198,12 @@ _renderConfig = function(chloropleth_field, chloropleth_title) {
             'height': h
         }
     } else if (app.state.selectedOutput) {
-        var config = app.state.config;
         chloropleth_field = app.state.selectedOutput;
         chloropleth_title = config['outputs'][chloropleth_field].descriptor;
         var colorScale = styles.colorScale(chloropleth_field, app.state.outputDomains[chloropleth_field]);
         return {
             'chloropleth_field': chloropleth_field,
-            'chloropleth_title': '',
+            'chloropleth_title': chloropleth_title,
             'colorScale': colorScale,
             'width': w,
             'height': h
@@ -213,7 +213,7 @@ _renderConfig = function(chloropleth_field, chloropleth_title) {
         var colorScale = styles.colorScale('resilience', app.state.outputDomains['resilience']);
         return {
             'chloropleth_field': 'resilience',
-            'chloropleth_title': 'Socioeconomic capacity (%)',
+            'chloropleth_title': config['outputs']['resilience'].descriptor,
             'colorScale': colorScale,
             'width': w,
             'height': h
@@ -338,7 +338,7 @@ app.runmodel = function() {
             $.each(result, function(idx, d) {
                 obj[idx] = d['data'];
             });
-            console.log('Got new model data..', obj);
+            console.log('Got new model data: ', obj);
             $.event.trigger({
                 type: 'runmodel',
                 modelData: obj
@@ -459,9 +459,12 @@ $(document).on('mapselect', function(e) {
 // handle input slider changed events
 $(document).on('inputchanged', function(event) {
     var input = event.input;
-    $('#inputs div.current-input').removeClass('current-input');
-    $('#table-' + input.key).parent().addClass('current-input');
-    $('#table-' + input.key + ' span.icon').addClass('glyphicon glyphicon-chevron-right');
+    $('#table-' + input.key).parent().css({
+        'background-color':'rgba(211, 211, 211, 0.3)',
+        'border':'1px solid rgba(211, 211, 211, 0.8)',
+        'border-radius': '4px'
+        }
+    );
     var feature = app.state.selectedFeature;
     var initialModel = app.state.initialModel;
     app.state.current_input = event.input.key;

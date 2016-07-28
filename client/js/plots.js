@@ -47,13 +47,13 @@ plots.output = function(config) {
 
     var color = d3.scale.category10();
 
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
-
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left");
+    // var xAxis = d3.svg.axis()
+    //     .scale(x)
+    //     .orient("bottom");
+    //
+    // var yAxis = d3.svg.axis()
+    //     .scale(y)
+    //     .orient("left");
 
     var svg = d3.select("#output-plot svg")
         .attr("width", width + margin.left + margin.right)
@@ -74,27 +74,13 @@ plots.output = function(config) {
         return d[config.chloropleth_field];
     })).nice();
 
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", width)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("GDP");
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
 
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text(config.chloropleth_title)
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
 
     svg.selectAll(".dot")
         .data(domain)
@@ -129,36 +115,32 @@ plots.output = function(config) {
             return d.name + ", Pop:" + d.pop;
         });
 
-    // if (initialModel) {
-    //     var d = initialModel;
-    //     svg.append('circle')
-    //         .attr('class', function() {
-    //             return 'initial ' + initialModel.id;
-    //         })
-    //         .attr("r", function() {
-    //             return Math.floor(Math.log(d.pop));
-    //         })
-    //         .attr("cx", function() {
-    //             return x(d.gdp_pc_pp);
-    //         })
-    //         .attr("cy", function() {
-    //             return y(d[input.key]);
-    //         })
-    //         .style({
-    //             'fill': 'lightgrey',
-    //             'stroke-width': '2px',
-    //             'stroke': 'darkgrey'
-    //         })
-    //         .style("opacity", '1')
-    //         .on('mouseover', function() {
-    //             console.log('initial-' + d.id);
-    //         });
-    // }
-
     if (!selected.empty()) {
         var sel = d3.select('.dot.' + selected.datum().id);
         sel.attr("class", "dot " + selected.datum().id + " featureselect");
     }
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("GDP");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text(config.chloropleth_title)
 }
 
 plots.input = function(input, selectedFeature, initialModel) {
@@ -228,28 +210,6 @@ plots.input = function(input, selectedFeature, initialModel) {
         return d[input.key]; // TODO: should be configurable, need label
     })).nice();
 
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", width)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("GDP");
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text(input.descriptor) // TODO: set dynamically
-
     svg.selectAll(".dot")
         .data(domain)
         .enter().append("circle")
@@ -283,37 +243,30 @@ plots.input = function(input, selectedFeature, initialModel) {
             return d.name + ", Pop: " + Math.floor(d.pop);
         });
 
-    // if (initialModel) {
-    //     var d = initialModel;
-    //     svg.append('circle')
-    //         .attr('class', function() {
-    //             return 'initial ' + initialModel.id;
-    //         })
-    //         .attr("r", function() {
-    //             return Math.floor(Math.log(d.pop));
-    //         })
-    //         .attr("cx", function() {
-    //             console.log('!!!FIX THIS: ' + x(d.gdp_pc_pp));
-    //             // x funcion needs gdp_pc_pp domain!!!
-    //             return x(d.gdp_pc_pp);
-    //         })
-    //         .attr("cy", function() {
-    //             return y(d[input.key]);
-    //         })
-    //         .style({
-    //             'fill': 'lightgrey',
-    //             'stroke-width': '2px',
-    //             'stroke': 'darkgrey'
-    //         })
-    //         .style("opacity", '1')
-    //         .on('mouseover', function() {
-    //             console.log('initial-' + d.id);
-    //         })
-    // }
-
-
     var title = input.descriptor;
     $('#input-bubble-title').html(title);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("GDP");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text(input.descriptor) // TODO: set dynamically
 
     /*
     var legend = svg.selectAll(".legend")
