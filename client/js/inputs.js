@@ -325,9 +325,10 @@ inputs.getInputValues = function() {
 /*
  * Handle feature selection events.
  */
-inputs.featureselect = function(feature, model, initial) {
+inputs.featureselect = function(feature, model, initialModel) {
     var props = feature.properties;
     var id = props.id;
+    var initial = initialModel[id];
     $('span#selected-feature').html(props.name);
     inputs.update(model, initial);
 }

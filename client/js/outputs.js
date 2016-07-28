@@ -286,9 +286,10 @@ outputs.update = function(model, initial) {
 /*
  * Handle feature selection events.
  */
-outputs.featureselect = function(feature, model, initial) {
+outputs.featureselect = function(feature, model, initialModel) {
     var props = feature.properties;
     var id = props.id;
+    var initial = initialModel[id];
     //$('span#selected-feature').html(props.name);
     outputs.update(model, initial);
 }

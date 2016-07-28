@@ -26,15 +26,6 @@ plots.output = function(config) {
     $('#output-plot svg').empty();
     $('#output-bubble-title').html(config.chloropleth_title);
 
-    // var margin = {
-    //         top: 20,
-    //         right: 10,
-    //         bottom: 20,
-    //         left: 10
-    //     },
-    //     width = 450 - margin.left - margin.right,
-    //     height = 350 - margin.top - margin.bottom;
-
     var domain = [];
     $.each(plots.model, function(idx, data) {
         if (data['gdp_pc_pp']) {
@@ -115,7 +106,7 @@ plots.output = function(config) {
             return Math.floor(Math.log(d.pop));
         })
         .attr("cx", function(d) {
-            return x(d.gdp_pc_pp);
+            return x(+d.gdp_pc_pp);
         })
         .attr("cy", function(d) {
             return y(d[config.chloropleth_field]);
@@ -174,15 +165,6 @@ plots.input = function(input, selectedFeature, initialModel) {
     // clear plot before redrawing
     $('#input-plot svg').empty();
 
-    // var margin = {
-    //         top: 20,
-    //         right: 10,
-    //         bottom: 20,
-    //         left: 10
-    //     },
-    //     width = 450 - margin.left - margin.right,
-    //     height = 350 - margin.top - margin.bottom;
-
     var domain = [];
     $.each(plots.model, function(idx, data) {
         if (data['gdp_pc_pp']) {
@@ -198,9 +180,8 @@ plots.input = function(input, selectedFeature, initialModel) {
                     obj[input.key] = data[input.key];
                 }
             } else {
-                obj[input.key] = data[input.key]; // TODO make this dynamic
+                obj[input.key] = data[input.key];
             }
-            // obj[input.key] = data[input.key];
             obj['pop'] = data['pop'];
             domain.push(obj);
         }
@@ -302,31 +283,33 @@ plots.input = function(input, selectedFeature, initialModel) {
             return d.name + ", Pop: " + Math.floor(d.pop);
         });
 
-    if (initialModel) {
-        var d = initialModel;
-        svg.append('circle')
-            .attr('class', function() {
-                return 'initial ' + initialModel.id;
-            })
-            .attr("r", function() {
-                return Math.floor(Math.log(d.pop));
-            })
-            .attr("cx", function() {
-                return x(d.gdp_pc_pp);
-            })
-            .attr("cy", function() {
-                return y(d[input.key]);
-            })
-            .style({
-                'fill': 'lightgrey',
-                'stroke-width': '2px',
-                'stroke': 'darkgrey'
-            })
-            .style("opacity", '1')
-            .on('mouseover', function() {
-                console.log('initial-' + d.id);
-            })
-    }
+    // if (initialModel) {
+    //     var d = initialModel;
+    //     svg.append('circle')
+    //         .attr('class', function() {
+    //             return 'initial ' + initialModel.id;
+    //         })
+    //         .attr("r", function() {
+    //             return Math.floor(Math.log(d.pop));
+    //         })
+    //         .attr("cx", function() {
+    //             console.log('!!!FIX THIS: ' + x(d.gdp_pc_pp));
+    //             // x funcion needs gdp_pc_pp domain!!!
+    //             return x(d.gdp_pc_pp);
+    //         })
+    //         .attr("cy", function() {
+    //             return y(d[input.key]);
+    //         })
+    //         .style({
+    //             'fill': 'lightgrey',
+    //             'stroke-width': '2px',
+    //             'stroke': 'darkgrey'
+    //         })
+    //         .style("opacity", '1')
+    //         .on('mouseover', function() {
+    //             console.log('initial-' + d.id);
+    //         })
+    // }
 
 
     var title = input.descriptor;
@@ -360,32 +343,39 @@ plots.input = function(input, selectedFeature, initialModel) {
 }
 
 // handle feature selection
-plots.featureselect = function(feature, initialModel, input, output) {
-    // update output plot
+plots.featureselect = function(feature, model,
+    initialModel, inputConfig, output) {
+    var id = feature.properties.id;
+    var initial = initialModel[id];
+    // reset input plot
+    plots.input(inputConfig, feature, initial);
+    // select features on plots
+    _selectBubble(feature, 'output-plot', initialModel, output);
+    _selectBubble(feature, 'input-plot', initialModel, inputConfig.key);
+}
+
+// update plots on map selection change
+plots.mapselect = function(feature, map_config, initialModel, input, output) {
+    plots.output(map_config);
     _selectBubble(feature, 'output-plot', initialModel, output);
     _selectBubble(feature, 'input-plot', initialModel, input);
 }
 
-// update plots on map selection change
-plots.mapselect = function(feature, map_config) {
-    plots.output(map_config);
-    _selectBubble(feature, 'output-plot');
-    _selectBubble(feature, 'input-plot');
-}
-
 // redraw the input scatterplot when an input is changed by the user
 plots.inputchanged = function(input, selectedFeature, initialModel) {
+    var id = selectedFeature.properties.id;
+    var initial = initialModel[id];
     // redraw the plot based on the current input
-    plots.input(input, selectedFeature, initialModel);
-    _selectBubble(selectedFeature, 'input-plot');
+    plots.input(input, selectedFeature, initial);
+    _selectBubble(selectedFeature, 'input-plot', initialModel, input.key);
 }
 
 // handle selection events on either of the plots
-plots.plotselect = function(feature, source, initial) {
-    var dest = source == 'output-plot' ? 'input-plot' : 'output-plot';
-    _selectBubble(feature, source, initial);
-    var plot = d3.select('#' + dest + ' svg');
-    _selectBubble(feature, dest, initial);
+plots.plotselect = function(feature, source, initialModel, input, output) {
+    // var dest = source == 'output-plot' ? 'input-plot' : 'output-plot';
+
+    _selectBubble(feature, 'output-plot', initialModel, output);
+    _selectBubble(feature, 'input-plot', initialModel, input);
 }
 
 
@@ -393,6 +383,7 @@ plots.plotselect = function(feature, source, initial) {
 _selectBubble = function(feature, source, initialModel, key) {
 
     var id = feature.properties.id;
+    var initial = initialModel[id];
     var p = d3.select('#' + source + ' svg');
     p.selectAll('circle.dot')
         .classed('featureselect', false);
@@ -400,42 +391,33 @@ _selectBubble = function(feature, source, initialModel, key) {
     n = s1.node();
     d = s1.datum();
 
-    if (initialModel) {
-        d3.selectAll('#' + source + ' circle.initial').remove();
-        // add the initial feature marker
-        // var ini = d3.select(n.parentNode.appendChild(
-        //     n.cloneNode(true), n.nextSibling));
-        //
-        // ini.attr('class', 'initial')
-        //     .style({
-        //         'fill': 'lightgrey',
-        //         'stroke': 'black'
-        //     })
-        //
-        // ini.datum(d)
-        //     .on('mouseover', function(d) {
-        //         console.log('ini mouseover');
-        //     });
+    if (initial) {
+        p.selectAll('circle.initial').remove();
         var x = d3.scale.linear()
             .range([0, width]);
 
         var y = d3.scale.linear()
             .range([height, 0]);
-
-        var d = initialModel;
+        var domain = _getDomain(initialModel, key);
+        x.domain(d3.extent(domain, function(d) {
+            return d.gdp_pc_pp;
+        })).nice();
+        y.domain(d3.extent(domain, function(d) {
+            return d[key];
+        })).nice();
 
         p.append('circle')
             .attr('class', function() {
-                return 'initial ' + d.id;
+                return 'initial ' + initial.id;
             })
             .attr("r", function() {
-                return Math.floor(Math.log(d.pop));
+                return Math.floor(Math.log(initial.pop));
             })
             .attr("cx", function() {
-                return x(d.gdp_pc_pp);
+                return x(initial.gdp_pc_pp);
             })
             .attr("cy", function() {
-                return y(d[key]);
+                return y(initial[key]);
             })
             .style({
                 'fill': 'lightgrey',
@@ -444,7 +426,7 @@ _selectBubble = function(feature, source, initialModel, key) {
             })
             .style("opacity", '1')
             .on('mouseover', function() {
-                console.log('initial-' + d.id);
+                // console.log('initial-' + initia.id);
             })
     }
 
@@ -461,6 +443,19 @@ _selectBubble = function(feature, source, initialModel, key) {
         })
 
     n.remove();
+}
+
+_getDomain = function(initialModel, key) {
+    var domain = [];
+    for (var model in initialModel) {
+        var obj = {};
+        m = initialModel[model];
+        obj.gdp_pc_pp = +m.gdp_pc_pp;
+        obj[key] = +m[key];
+        obj.pop = +m.pop;
+        domain.push(obj);
+    }
+    return domain;
 }
 
 

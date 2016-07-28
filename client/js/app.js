@@ -29,6 +29,11 @@ _loadInitialData = function() {
             app.state.selectedFeature = _getDefaultFeature();
             app.state.current_input = app.state.config.default_input;
             app.state.current_output = app.state.config.default_output;
+
+            // set models on plots
+            plots.model = app.state.model;
+            plots.initialModel = app.state.initialModel;
+
             d.resolve();
         });
     return d.promise;
@@ -141,7 +146,6 @@ _populateInputDomains = function(data) {
 _createInputSliders = function(data) {
     // draw input controls and bubble charts
     inputs.getSliders(app.state.inputDomains);
-    _createScatterPlots()
 }
 
 _createOutputDistributions = function() {
@@ -155,7 +159,6 @@ _createScatterPlots = function() {
     var input = inputs.getConfig()[defaultInput];
     var config = _renderConfig();
     // set the model on the plots for rendering
-    plots.model = app.state.model;
     plots.output(config);
     plots.input(input, app.state.selectedFeature);
 }
@@ -194,7 +197,17 @@ _renderConfig = function(chloropleth_field, chloropleth_title) {
             'height': h
         }
     } else if (app.state.selectedOutput) {
-        return app.state.selectedOutput;
+        var config = app.state.config;
+        chloropleth_field = app.state.selectedOutput;
+        chloropleth_title = config['outputs'][chloropleth_field].descriptor;
+        var colorScale = styles.colorScale(chloropleth_field, app.state.outputDomains[chloropleth_field]);
+        return {
+            'chloropleth_field': chloropleth_field,
+            'chloropleth_title': '',
+            'colorScale': colorScale,
+            'width': w,
+            'height': h
+        }
     } else {
         // defaults
         var colorScale = styles.colorScale('resilience', app.state.outputDomains['resilience']);
@@ -223,7 +236,7 @@ app.init = function() {
     // map switcher event handling
     $('.sm-map').on('click', function(e) {
         var chloropleth_field = e.currentTarget.getAttribute('data-output'),
-            chloropleth_title =  e.currentTarget.getAttribute('data-output-title');
+            chloropleth_title = e.currentTarget.getAttribute('data-output-title');
         $.event.trigger({
             type: 'mapselect',
             chloropleth_field: chloropleth_field,
@@ -237,7 +250,7 @@ app.init = function() {
     });
 
     // reset the model to its initial state
-    $('button#resetmodel').on('click', function(e){
+    $('button#resetmodel').on('click', function(e) {
         app.resetmodel();
     })
 }
@@ -245,7 +258,9 @@ app.init = function() {
 // draw the UI
 app.drawUI = function() {
     var d = Q.defer();
-    Q.all([_createInputSliders(), _createOutputDistributions(), _drawMap()])
+    Q.all([
+            _createInputSliders(), _createOutputDistributions(), _createScatterPlots(), _drawMap()
+        ])
         .then(function() {
             // select the country
             var selectedFeature;
@@ -269,7 +284,7 @@ app.drawUI = function() {
             });
             d.resolve();
         })
-        .fail(function(err){
+        .fail(function(err) {
             console.log(err);
         });
     return d.promise;
@@ -312,39 +327,38 @@ app.runmodel = function() {
 
     // update application state and redraw UI
     p.then(function(df) {
-        var result = JSON.parse(df);
-        var obj = {};
-        $.each(result, function(idx, d) {
-            obj[idx] = d['data'];
+            var result = JSON.parse(df);
+            var obj = {};
+            $.each(result, function(idx, d) {
+                obj[idx] = d['data'];
+            });
+            console.log('Got new model data..', obj);
+            $.event.trigger({
+                type: 'runmodel',
+                modelData: obj
+            });
+        })
+        .fail(function(err) {
+            console.log(err);
         });
-        console.log('Got new model data..', obj);
-        $.event.trigger({
-            type: 'runmodel',
-            modelData: obj
-        });
-    })
-    .fail(function(err){
-        console.log(err);
-    });
 }
 
 // resets the model and ui to initial state
-app.resetmodel = function(){
+app.resetmodel = function() {
     $('#spinner span').html('');
     $('#spinner').css('display', 'block');
     $('#mask').css('opacity', '.2');
     _loadInitialData().then(function() {
-        var p = app.drawUI();
-        p.then(function() {
-            console.log('Model reset');
-            $("#spinner").css('display', 'none');
-            $('#mask').css('opacity', '1');
-            // $('#ui').css('visibility', 'visible');
+            var p = app.drawUI();
+            p.then(function() {
+                console.log('Model reset');
+                $("#spinner").css('display', 'none');
+                $('#mask').css('opacity', '1');
+            });
+        })
+        .fail(function(err) {
+            console.log(err);
         });
-    })
-    .fail(function(err){
-        console.log(err);
-    });
 }
 
 /* event listeners */
@@ -355,15 +369,17 @@ $(document).ready(function() {
 
 // handle featureselection events on map
 $(document).on('featureselect', function(event) {
+    var inputConfig = inputs.getConfig()[app.state.current_input];
     var feature = event.feature;
     var output = app.state.current_output;
     var input = app.state.current_input;
     var model = app.state.model[feature.properties.id];
-    var initialModel = app.state.initialModel[feature.properties.id];
+    // var initialModel = app.state.initialModel[feature.properties.id];
+    var initialModel = app.state.initialModel;
     app.state.selectedFeature = feature;
     inputs.featureselect(feature, model, initialModel);
     outputs.featureselect(feature, model, initialModel);
-    plots.featureselect(feature, initialModel, input, output);
+    plots.featureselect(feature, model, initialModel, inputConfig, output);
     map.featureselect(feature, model);
 });
 
@@ -371,16 +387,18 @@ $(document).on('featureselect', function(event) {
 $(document).on('plotselect', function(event) {
     var f = event.feature;
     var source = event.source;
+    var output = app.state.current_output;
+    var input = app.state.current_input;
     $.each(app.state.features, function(idx, feature) {
         var props = feature.properties;
         if (f.id == props.id) {
             app.state.selectedFeature = feature;
             var model = app.state.model[props.id];
-            var initialModel = app.state.initialModel[feature.properties.id];
+            var initialModel = app.state.initialModel;
             inputs.featureselect(feature, model, initialModel);
             outputs.featureselect(feature, model, initialModel);
             map.featureselect(feature, model);
-            plots.plotselect(feature, source, initialModel);
+            plots.plotselect(feature, source, initialModel, input, output);
         }
     });
 });
@@ -417,16 +435,20 @@ $(document).on('mapselect', function(e) {
     $('#title').html(chloropleth_title);
     var id = app.state.selectedFeature.properties.id;
     var model = app.state.model[id];
-    app.state.selectedOutput = config;
-    map.config = app.state.selectedOutput;
-    plots.mapselect(app.state.selectedFeature, config);
+    var initialModel = app.state.initialModel;
+    app.state.selectedOutput = config['chloropleth_field'];
+    map.config = config;
+    plots.mapselect(
+        app.state.selectedFeature, config, initialModel, app.state.current_input,
+        app.state.current_output
+    );
     map.mapselect(app.state.selectedFeature, model);
 });
 
 // handle input slider changed events
 $(document).on('inputchanged', function(event) {
     var feature = app.state.selectedFeature;
-    var initialModel = app.state.initialModel[feature.properties.id];
+    var initialModel = app.state.initialModel;
     app.state.current_input = event.input.key;
     plots.inputchanged(event.input, feature, initialModel);
 });
@@ -448,7 +470,7 @@ $(document).on('display-output-data', function(event) {
     $('#data').append('<span><strong>' + config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
 });
 
-$(document).on('outputselect', function(e){
+$(document).on('outputselect', function(e) {
     var output = e.currentTarget.getAttribute('data-output');
     var config = _renderConfig(e);
     styles.computeStyles(config.colorScale, app.state.model);
