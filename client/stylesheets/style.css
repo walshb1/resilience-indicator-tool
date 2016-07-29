@@ -150,13 +150,12 @@ span.icon {
     font-weight: 550;
 }
 #output-plot svg, #input-plot svg {
-    padding: 1em;
+    padding: 1.2em;
 }
 #outputs div:hover {
     background-color: lightgrey !important;
 }
 #outputs span.descriptor {
-    /*text-align: center;*/
 }
 #outputs div {
     min-height: 105px;
@@ -215,6 +214,12 @@ g.tick> text {
     stroke: #000;
     stroke-width: 2px;
     shape-rendering: crispEdges;
+}
+.axis text.label {
+    font-size: 1em;
+}
+g.tick > text {
+    font-size: 1em  !important;
 }
 .brush .extent {
     fill-opacity: 0;
