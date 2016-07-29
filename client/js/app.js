@@ -480,8 +480,8 @@ $(document).on('display-output-data', function(event) {
     var model = app.state.model[id];
     var chl_field = +model[config.chloropleth_field];
     $('#data').empty();
-    $('#data').append('<span><strong>' + name + '. </strong></span>');
-    $('#data').append('<span><strong>' + config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
+    $('#data').append('<span><strong>' + name + ' </strong></span>');
+    $('#data').append('<span>' + chl_field.toFixed(1) + '%</span>');
 });
 
 $(document).on('outputselect', function(e) {

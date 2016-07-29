@@ -103,8 +103,8 @@ map.draw = function(config, json, model_data) {
                 var chl_field = +model_data[id][map.config.chloropleth_field];
                 var id = d.properties.id;
                 $('#data').empty();
-                $('#data').append('<span><strong>' + name + '. </strong></span>');
-                $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
+                $('#data').append('<span><strong>' + name + ' </strong></span>');
+                $('#data').append('<span>' + chl_field.toFixed(1) + '%</span>');
             }
         })
         .on('mousedown', function(d) {
@@ -148,8 +148,8 @@ map.featureselect = function(feature, model) {
 
     var chl_field = +model[map.config.chloropleth_field];
     $('#data').empty();
-    $('#data').append('<span><strong>' + name + '. </strong></span>');
-    $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
+    $('#data').append('<span><strong>' + name + ' </strong></span>');
+    $('#data').append('<span>' + chl_field.toFixed(1) + '%</span>');
 }
 
 // handle output map switch events
@@ -158,8 +158,8 @@ map.mapselect = function(feature, model) {
     var id = feature.properties.id;
     var chl_field = +model[map.config.chloropleth_field];
     $('#data').empty();
-    $('#data').append('<span><strong>' + name + '. </strong></span>');
-    $('#data').append('<span><strong>' + map.config.chloropleth_title + ': </strong>' + chl_field.toFixed(5) + '</span>');
+    $('#data').append('<span><strong>' + name + ' </strong></span>');
+    $('#data').append('<span>' + chl_field.toFixed(1) + '%</span>');
 }
 
 module.exports = map;
