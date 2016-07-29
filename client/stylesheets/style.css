@@ -150,7 +150,7 @@ span.icon {
     font-weight: 550;
 }
 #output-plot svg, #input-plot svg {
-    padding: 1.2em;
+    padding: 1em 0 0 2em;
 }
 #outputs div:hover {
     background-color: lightgrey !important;

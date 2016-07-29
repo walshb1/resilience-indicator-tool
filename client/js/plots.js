@@ -8,8 +8,8 @@ var margin = {
         bottom: 20,
         left: 10
     },
-    width = 450 - margin.left - margin.right,
-    height = 350 - margin.top - margin.bottom;
+    width = 470 - margin.left - margin.right,
+    height = 370 - margin.top - margin.bottom;
 
 
 var plots = {};
@@ -128,7 +128,7 @@ plots.output = function(config) {
         .call(xAxis)
         .append("text")
         .attr("class", "label")
-        .attr("x", width)
+        .attr("x", width - 20)
         .attr("y", -6)
         .style("text-anchor", "end")
         .text("GDP");
@@ -256,7 +256,7 @@ plots.input = function(input, selectedFeature, initialModel) {
         .call(xAxis)
         .append("text")
         .attr("class", "label")
-        .attr("x", width)
+        .attr("x", width - 20)
         .attr("y", -6)
         .style("text-anchor", "end")
         .text("GDP");
