@@ -150,7 +150,8 @@ span.icon {
     font-weight: 550;
 }
 #output-plot svg, #input-plot svg {
-    padding: 1em 0 0 2em;
+    padding: 1em .5em 0 3.8em;
+    float: left !important;
 }
 #outputs div:hover {
     background-color: lightgrey !important;
@@ -207,7 +208,7 @@ g.brush> .background {
     cursor: default !important;
 }
 g.tick> text {
-    font-size: .6em !important;
+    font-size: .5em !important;
 }
 .axis path, .axis line {
     fill: none;

@@ -90,11 +90,6 @@ inputs.getSliders = function(inputConfig) {
             .attr("id", "table-" + input.key)
             .append("tr");
 
-        // tr.append("td")
-        //     .attr('width', '5%')
-        //     .append('span')
-        //     .attr("class", "icon");
-
         tr.append("td")
             .attr('width', '55%')
             .append('span')

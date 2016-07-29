@@ -6,9 +6,9 @@ var margin = {
         top: 20,
         right: 10,
         bottom: 20,
-        left: 10
+        left: 50
     },
-    width = 470 - margin.left - margin.right,
+    width = 500 - margin.left - margin.right,
     height = 370 - margin.top - margin.bottom;
 
 
