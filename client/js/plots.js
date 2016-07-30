@@ -1,6 +1,7 @@
 var d3 = require('d3'),
     Q = require('q'),
-    $ = require('jquery');
+    $ = require('jquery')
+    inputs = require('./inputs');
 
 var margin = {
         top: 20,
@@ -156,20 +157,52 @@ plots.input = function(input, selectedFeature, initialModel) {
             obj['name'] = data['name'];
             obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
+            obj['pop'] = data['pop'];
+            var val = data[input.key];
             if (selectedFeature) {
                 if (data.id == selectedFeature.properties.id) {
                     var extent = +input.brush.extent()[1].toFixed(5);
                     obj[input.key] = extent;
-                } else {
-                    obj[input.key] = data[input.key];
+                    domain.push(obj);
                 }
-            } else {
-                obj[input.key] = data[input.key];
+                else {
+                    if (input.lower == 0 && input.upper == 0){
+                        obj[input.key] = val;
+                        domain.push(obj);
+                    }
+                    else if (val > input.upper){
+                        obj[input.key] = input.upper;
+                        domain.push(obj);
+                    }
+                    else {
+                        obj[input.key] = val;
+                        domain.push(obj);
+                    }
+                }
             }
-            obj['pop'] = data['pop'];
-            domain.push(obj);
+            else {
+                if (input.lower == 0 && input.upper == 0){
+                    obj[input.key] = val;
+                    domain.push(obj);
+                }
+                else if (val > input.upper){
+                    obj[input.key] = input.upper;
+                    domain.push(obj);
+                }
+                else {
+                    obj[input.key] = val;
+                    domain.push(obj);
+                }
+            }
         }
     });
+
+    if(input.key=='protection'){
+        console.log(input.distribution.length == domain.length);
+        domain.forEach(function(d, idx, data){
+            console.log(d, idx, data);
+        });
+    }
 
     var x = d3.scale.linear()
         .range([0, width]);
@@ -272,31 +305,6 @@ plots.input = function(input, selectedFeature, initialModel) {
         .style("text-anchor", "end")
         .text(input.descriptor);
 
-    /*
-    var legend = svg.selectAll(".legend")
-        .data(color.domain())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) {
-            return "translate(0," + i * 20 + ")";
-        });
-
-    legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
-
-    legend.append("text")
-        .attr("x", width - 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(function(d) {
-            return d;
-        });
-    */
-
 }
 
 // handle feature selection
@@ -355,7 +363,7 @@ _selectBubble = function(feature, source, initialModel, key) {
 
         var y = d3.scale.linear()
             .range([height, 0]);
-        var domain = _getDomain(initialModel, key);
+        var domain = _getDomain(initialModel, source, key);
         x.domain(d3.extent(domain, function(d) {
             return d.gdp_pc_pp;
         })).nice();
@@ -402,15 +410,37 @@ _selectBubble = function(feature, source, initialModel, key) {
     n.remove();
 }
 
-_getDomain = function(initialModel, key) {
+_getDomain = function(initialModel, source, key) {
     var domain = [];
-    for (var model in initialModel) {
-        var obj = {};
-        m = initialModel[model];
-        obj.gdp_pc_pp = +m.gdp_pc_pp;
-        obj[key] = +m[key];
-        obj.pop = +m.pop;
-        domain.push(obj);
+    if (source == 'output-plot'){
+        for (var model in initialModel) {
+            var obj = {};
+            m = initialModel[model];
+            obj[key] = +m[key];
+            obj.gdp_pc_pp = +m.gdp_pc_pp;
+            obj.pop = +m.pop;
+            domain.push(obj);
+        }
+    }
+    else {
+        var input = inputs.getConfig()[key];
+        for (var model in initialModel) {
+            m = initialModel[model];
+            var obj = {};
+            obj.gdp_pc_pp = +m.gdp_pc_pp;
+            obj.pop = +m.pop;
+            var val = +m[key];
+            if(input.lower == 0 && input.upper == 0){
+                obj[key] = val;
+            }
+            else if (val > input.upper){
+                obj[key] = input.upper;
+            }
+            else {
+                obj[key] = val;
+            }
+            domain.push(obj);
+        }
     }
     return domain;
 }

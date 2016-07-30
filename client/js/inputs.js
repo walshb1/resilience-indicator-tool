@@ -14,22 +14,9 @@ inputs.getSliders = function(inputConfig) {
     $('#inputs').empty();
     $.each(inputConfig, function(idx, input) {
 
-        // sort the distribution
-        var data = input.distribution.sort(function(a, b) {
-            return a - b;
-        });
+        var data = input.distribution;
 
-        var bounds;
-        if (input.lower == 0 && input.upper == 0) {
-            bounds = d3.extent(data);
-        } else {
-            bounds = [input.lower, input.upper];
-        }
-
-        // console.log(input.descriptor, data);
-
-        // TODO discuss this
-        bounds = d3.extent(data);
+        var bounds = d3.extent(data);
 
         var margin = {
             top: 5,
@@ -51,7 +38,7 @@ inputs.getSliders = function(inputConfig) {
             .clamp(true);
 
         var y = d3.scale.linear()
-            .domain([0, d3.max(bw, function(d) {
+            .domain([bounds[0], d3.max(bw, function(d) {
                 return d[1];
             })])
             .range([height, 0]);

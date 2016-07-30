@@ -187,6 +187,7 @@ div#inputs, #inputs div, #inputs table, #inputs path, #inputs g.brush {
 
 #inputs svg {
     pointer-events: all;
+    border-bottom: 1px solid lightgrey;
 }
 .selecting rect {
     fill: orange;
@@ -230,6 +231,7 @@ g.tick > text {
     fill: none;
     stroke: #2f4f4f;
     stroke-width: 2px;
+    opacity: .8;
 }
 .table {
     margin-bottom: .2em !important;

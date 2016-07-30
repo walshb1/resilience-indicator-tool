@@ -122,20 +122,35 @@ _populateOutputDomains = function() {
 _populateInputDomains = function(data) {
     var params = app.state.config.inputs;
     var inputDomains = [];
-    $.each(data, function(i, val) {
-        if (params.indexOf(val.key) > -1) {
+    data.forEach(function(d, idx, data){
+        if(params.indexOf(d.key) > -1){
             var obj = {};
-            obj.key = val.key;
-            obj.descriptor = val.descriptor;
+            obj.key = d.key;
+            obj.descriptor = d.descriptor;
             obj.distribution = [];
-            obj.lower = +val.lower;
-            obj.upper = +val.upper;
-            obj.number_type = val.number_type;
-            $.each(app.state.model, function(j, m) {
-                if (m[val.key]) {
-                    obj.distribution.push(+m[val.key]);
+            obj.lower = +d.lower;
+            obj.upper = +d.upper;
+            obj.number_type = d.number_type;
+            $.each(app.state.model, function(j, m){
+                if(m[d.key]){
+                    var val = +m[d.key];
+                    if(obj.lower == 0 && obj.upper == 0){
+                        obj.distribution.push(val);
+                    }
+                    else if(val > obj.upper){
+                        // normalize values outside the configured bounds
+                        obj.distribution.push(obj.upper);
+                    }
+                    else {
+                        obj.distribution.push(val);
+                    }
                 }
-            })
+            });
+            // sort the distribution
+            obj.distribution.sort(function(a, b) {
+                return a - b;
+            });
+            console.log(obj.key, obj.distribution);
             inputDomains.push(obj);
         }
     });
