@@ -16,13 +16,19 @@ inputs.getSliders = function(inputConfig) {
 
         var data = input.distribution;
 
+        // add a margin of 0.1 m,M
+        var m1 = data[0] - (data[0] * 0.1)
+        var m2 = data[data.length -1] + (data[data.length -1] * 0.1)
+        data.unshift(m1);
+        data.push(m2);
+
         var bounds = d3.extent(data);
 
         var margin = {
             top: 5,
-            right: 0,
+            right: 1,
             bottom: 0,
-            left: 0
+            left: 1
         }
 
         var width = 120 - margin.left - margin.right,
