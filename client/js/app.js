@@ -143,8 +143,10 @@ _populateInputDomains = function(data) {
                         obj.distribution.push(val);
                     }
                     else if(val > obj.upper){
-                        // normalize values outside the configured bounds
-                        m[d.key] = obj.upper
+                        /*
+                        normalize values on the model and input distributions which are outside the inputs configured bounds
+                        */
+                        m[d.key] = obj.upper;
                         obj.distribution.push(obj.upper);
                     }
                     else {
