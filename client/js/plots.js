@@ -197,13 +197,6 @@ plots.input = function(input, selectedFeature, initialModel) {
         }
     });
 
-    if(input.key=='protection'){
-        console.log(input.distribution.length == domain.length);
-        domain.forEach(function(d, idx, data){
-            console.log(d, idx, data);
-        });
-    }
-
     var x = d3.scale.linear()
         .range([0, width]);
 
@@ -337,8 +330,6 @@ plots.inputchanged = function(input, selectedFeature, initialModel) {
 
 // handle selection events on either of the plots
 plots.plotselect = function(feature, source, initialModel, input, output) {
-    // var dest = source == 'output-plot' ? 'input-plot' : 'output-plot';
-
     _selectBubble(feature, 'output-plot', initialModel, output);
     _selectBubble(feature, 'input-plot', initialModel, input);
 }

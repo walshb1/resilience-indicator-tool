@@ -18,14 +18,19 @@ _loadInitialData = function() {
     var d = Q.defer();
     Q.all([_loadMapData(), _loadInputData(), _loadConfig(), _loadModelData()])
         .then(function(results) {
+            // get intital configurations
             app.state.config = results[2];
             app.state.layers = results[0];
             app.state.features = _getModelFeatures(results[0]);
-            app.state.model = _getModelData(results[3]);
-            app.state.initialModel = $.extend(true, {}, app.state.model);
-            app.state.outputDomains = _populateOutputDomains();
             app.state.inputInfo = results[1];
+
+            // set up the models and input/output distributions
+            app.state.model = _getModelData(results[3]);
             app.state.inputDomains = _populateInputDomains(results[1]);
+            app.state.outputDomains = _populateOutputDomains();
+            app.state.initialModel = $.extend(true, {}, app.state.model);
+
+            // setup default selected feature and input/output
             app.state.selectedFeature = _getDefaultFeature();
             app.state.current_input = app.state.config.default_input;
             app.state.current_output = app.state.config.default_output;
@@ -139,6 +144,7 @@ _populateInputDomains = function(data) {
                     }
                     else if(val > obj.upper){
                         // normalize values outside the configured bounds
+                        m[d.key] = obj.upper
                         obj.distribution.push(obj.upper);
                     }
                     else {
@@ -150,7 +156,6 @@ _populateInputDomains = function(data) {
             obj.distribution.sort(function(a, b) {
                 return a - b;
             });
-            console.log(obj.key, obj.distribution);
             inputDomains.push(obj);
         }
     });
