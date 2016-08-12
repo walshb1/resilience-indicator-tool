@@ -61,7 +61,7 @@ inputs.getSliders = function(inputConfig) {
             .y0(height)
             .y1(function(d) {
                 return y(d[1]);
-            })
+            });
 
         // bisect data array at brush selection point
         b = d3.bisector(function(d) {
@@ -193,7 +193,8 @@ inputs.getSliders = function(inputConfig) {
             $('#mask-' + input.key).empty();
             var s = brush.extent();
             var clip = b(data, s[1]);
-            var selected = data.slice(0, clip + 1);
+            var selected = data.slice(0, clip);
+            selected.push(s[1]);
             mask.selectAll("g#mask-" + input.key + " .mask")
                 .data([science.stats.bandwidth.nrd0])
                 .enter()
