@@ -252,7 +252,10 @@ span.descriptor {
 /* feature selection styles */
 
 path.featureselect {
-    fill: yellow !important;
+    /*fill: yellow !important*/
+    stroke: #000 !important;
+    stroke-width: 2px !important;
+    stroke-opacity: .6 !important;
 }
 circle.featureselect {
     fill: yellow !important;
