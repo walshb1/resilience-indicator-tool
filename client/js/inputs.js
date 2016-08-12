@@ -75,7 +75,8 @@ inputs.getSliders = function(inputConfig) {
         }).left;
 
         var div = d3.select('#inputs')
-            .append("div");
+            .append("div")
+            .attr('class', 'input-row');
 
         var tr = div.append("table")
             .attr('width', '100%')
@@ -89,7 +90,7 @@ inputs.getSliders = function(inputConfig) {
             .attr('width', '55%')
             .append('span')
             .attr("class", "descriptor")
-            .style('pointer-events', 'none')
+            .style('pointer-events', 'all')
             .text(input.descriptor);
 
         tr.append("td")

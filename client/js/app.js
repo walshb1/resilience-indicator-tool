@@ -304,6 +304,15 @@ app.drawUI = function() {
                 type: "featureselect",
                 feature: feature
             });
+            // handle click events on input distribution labels
+            $('#inputs .descriptor').on('click', function(e){
+                var id = $(e.target).closest('tr').find('svg').attr('id');
+                var input = inputs.getConfig()[id];
+                $.event.trigger({
+                    type: 'inputchanged',
+                    input: input
+                });
+            });
             d.resolve();
         })
         .fail(function(err) {
