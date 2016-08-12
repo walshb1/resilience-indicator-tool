@@ -1,4 +1,4 @@
-body {
+    body {
     height: 100%;
     width: 100%;
     font-family: 'Lato';
@@ -136,6 +136,12 @@ div.active {
     border: 1px solid rgba(211, 211, 211, 0.8);
     border-radius: 4px;
 }
+#inputs svg * {
+    pointer-events: none;
+}
+#inputs svg g.brush g.resize.e  * {
+    pointer-events: all !important;
+}
 span.icon {
     vertical-align: middle;
 }
@@ -156,8 +162,7 @@ span.icon {
 #outputs div:hover {
     background-color: lightgrey !important;
 }
-#outputs span.descriptor {
-}
+#outputs span.descriptor {}
 #outputs div {
     min-height: 105px;
 }
@@ -174,17 +179,15 @@ div#inputs table tr {
 svg {
     font: 10 px sans-serif;
 }
-div#inputs, #inputs div, #inputs table, #inputs path, #inputs g.brush {
+#inputs g.brush {
     pointer-events: none;
 }
 #inputs g.brush rect.extent {
     cursor: default !important;
 }
-
-/*#inputs g.brush g.resize.e {
+div#inputs {
     pointer-events: all;
-}*/
-
+}
 #inputs svg {
     pointer-events: all;
     border-bottom: 1px solid lightgrey;
@@ -202,9 +205,6 @@ div#inputs, #inputs div, #inputs table, #inputs path, #inputs g.brush {
     cursor: move !important;
     display: inline !important;
 }
-g.brush> rect.extent {
-    /*pointer-events: none;*/
-}
 g.brush> .background {
     cursor: default !important;
 }
@@ -220,8 +220,8 @@ g.tick> text {
 .axis text.label {
     font-size: 1em;
 }
-g.tick > text {
-    font-size: 1em  !important;
+g.tick> text {
+    font-size: 1em !important;
 }
 .brush .extent {
     fill-opacity: 0;

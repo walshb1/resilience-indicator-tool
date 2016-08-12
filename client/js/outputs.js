@@ -29,9 +29,9 @@ outputs.getOutputDistributions = function(outputDomains) {
 
         var margin = {
                 top: 5,
-                right: 0,
+                right: 2,
                 bottom: 0,
-                left: 0
+                left: 2
             },
             width = 120 - margin.left - margin.right,
             height = 30 - margin.top - margin.bottom;

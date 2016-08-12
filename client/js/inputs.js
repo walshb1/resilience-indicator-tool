@@ -81,32 +81,35 @@ inputs.getSliders = function(inputConfig) {
             .attr('width', '100%')
             .attr('class', 'table table-responsive')
             .attr("id", "table-" + input.key)
-            .append("tr");
+            .style('pointer-events', 'none')
+            .append("tr")
+            .style('pointer-events', 'none');
 
         tr.append("td")
             .attr('width', '55%')
             .append('span')
             .attr("class", "descriptor")
+            .style('pointer-events', 'none')
             .text(input.descriptor);
 
         tr.append("td")
             .attr('width', '15%')
             .append('span')
             .attr("class", "value")
+            .style('pointer-events', 'none')
             .text(' ');
 
         var td = tr.append("td")
-            .attr('width', '30%');
+            .attr('width', '30%')
+            .style('pointer-events', 'none');
 
         var svg = td.append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .attr("id", input.key)
+            .style('pointer-events', 'all')
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .on('click', function(e) {
-                console.log(e);
-            });
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // add gaussian curve
         var gaus = svg.append("g")
@@ -228,17 +231,13 @@ inputs.getSliders = function(inputConfig) {
                 // source is a MouseEvent
                 // user is updating the input manually
                 var node = d3.select(d3.event.sourceEvent.target).node();
-                if (node.nodeName == 'svg') {
-                    console.log('got svg');
-                } else {
-                    console.log(node.nodeName);
-                }
-                var id = node.id;
+                var s = $(node).closest('svg');
+                var id = $(s).attr('id');
                 // redraw the input plot
                 if (id) {
                     inputs.redrawInputPlot(id);
                 } else {
-                    console.warn('Cant get input id...');
+                    console.warn('Cant get input id from:' + node);
                 }
             }
             svg.classed("selecting", !d3.event.target.empty());
