@@ -61,7 +61,7 @@ styles.applyDefaults = function() {
         .style('stroke-linejoin', 'miter');
 }
 
-styles.computeStyles = function(colorScale, model_data) {
+styles.computeStyles = function(colorScale, model_data, chloropleth_field) {
 
     var svg = d3.select("#map");
 
@@ -70,7 +70,7 @@ styles.computeStyles = function(colorScale, model_data) {
             // map resilience output by default
             var model = model_data[d.properties.id];
             if(model){
-                var value = model.resilience;
+                var value = model[chloropleth_field];
                 var color = styles.chloropleth(colorScale, value);
                 return color;
             }
@@ -83,15 +83,20 @@ styles.colorScale = function(domain, data) {
         return a - b;
     });
 
+    var OrRd = colorbrewer.OrRd[7];
+    var BuPu = colorbrewer.BuPu[7];
+    var GnBu = colorbrewer.GnBu[7];
+
+    var RdOr = OrRd.slice(0).reverse();
+
     color_ranges = {
-        'resilience': colorbrewer.Reds[5],
-        'risk': colorbrewer.Purples[5],
-        'risk_to_assets': colorbrewer.Blues[5]
+        'resilience': RdOr,
+        'risk': BuPu,
+        'risk_to_assets': GnBu
     }
 
     //create quantile classes with color scale
     var colors = d3.scale.quantile()
-        // .domain([0, 1])
         .domain(d)
         .range(color_ranges[domain]);
 

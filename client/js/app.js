@@ -192,7 +192,7 @@ _drawMap = function() {
     map.draw(config, app.state.layers, app.state.model)
         .then(function() {
             $('#title').html(config.chloropleth_title);
-            styles.computeStyles(config.colorScale, app.state.model);
+            styles.computeStyles(config.colorScale, app.state.model, config.chloropleth_field);
             styles.applyDefaults();
             $.event.trigger({
                 type: 'mapselect',
@@ -463,7 +463,7 @@ $(document).on('mapselect', function(e) {
 
     // switch output maps
     var config = _renderConfig(chloropleth_field, chloropleth_title);
-    styles.computeStyles(config.colorScale, app.state.model);
+    styles.computeStyles(config.colorScale, app.state.model, chloropleth_field);
     styles.applyDefaults();
     $('#title').html(chloropleth_title);
     var id = app.state.selectedFeature.properties.id;
@@ -509,7 +509,7 @@ $(document).on('display-output-data', function(event) {
 $(document).on('outputselect', function(e) {
     var output = e.currentTarget.getAttribute('data-output');
     var config = _renderConfig(e);
-    styles.computeStyles(config.colorScale, app.state.model);
+    styles.computeStyles(config.colorScale, app.state.model, output);
     styles.applyDefaults();
     $('#title').html(config.chloropleth_title);
     alert(output);

@@ -2,15 +2,15 @@
     "outputs": {
         "risk_to_assets": {
             "descriptor": "Risk to assets",
-            "gradient": ["#f1eef6", "#045a8d"]
+            "gradient": ["#f0f9e8", "#08589e"]
         },
         "resilience": {
             "descriptor": "Socioeconomic capacity",
-            "gradient": ["#bd0026", "#ffffb2"]
+            "gradient": ["#990000", "#fef0d9"]
         },
         "risk": {
             "descriptor": "Risk",
-            "gradient": ["#feebe2", "#7a0177"]
+            "gradient": ["#edf8fb", "#6e016b"]
         }
     },
     "inputs": ["axfin_p", "axfin_r", "axhealth", "finance_pre",
