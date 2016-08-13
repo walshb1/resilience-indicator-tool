@@ -25,6 +25,11 @@ var argv = require('yargs')
         describe: 'Remove all generated files from the current directory',
         type: 'boolean'
     })
+    .option('clean-web', {
+        alias: 'cw',
+        describe: 'Remove all generated files from the web folders',
+        type: 'boolean'
+    })
     .option('web', {
         describe: 'Generate files required for web visualization',
         type: 'boolean'
@@ -48,6 +53,21 @@ var config,
 function _clean() {
     var d = Q.defer();
     glob('*(*.topojson|*.svg|*.png)', function(err, files) {
+        if (err) return console.log(err);
+        for (var i in files) {
+            var file = path.resolve(__dirname, './', files[i]);
+            fs.removeSync(file, function(err) {
+                if (err) return console.log(err);
+            });
+        }
+        d.resolve();
+    });
+    return d.promise;
+}
+
+function _cleanWeb() {
+    var d = Q.defer();
+    glob('..{/data/*,/public/images/*_thumb.png}', function(err, files) {
         if (err) return console.log(err);
         for (var i in files) {
             var file = path.resolve(__dirname, './', files[i]);
@@ -98,19 +118,24 @@ function _generateTopojson(config) {
 /*
  * Generate visualization artefacts
  * and copy to viz folders:
- * map_data.topojson goes to ../maps for the /features.json api.
- * *_thubm.png goes to ../public/images/ for map switcher.
+ * map_data.topojson goes to ../data for the /features.json api.
+ * *_thumb.png goes to ../public/images/ for map switcher.
  */
 function _generateWeb(config) {
     _generateTopojson(config)
         .then(function(files) {
-            console.log(files);
-            // not generating svg so copy output to maps folder
-            var df = config.inputs.data.split('/')[1];
+            // not generating svg so copy output to data folder
+            var df = config.inputs.df.split('/')[1];
+            var info = config.inputs.info.split('/')[1];
+            var func = config.inputs.function.split('/')[1];
             fs.copySync(
-                files.map_data, '../maps/' + files.map_data);
+                files.map_data, '../data/' + files.map_data);
             fs.copySync(
-                config.inputs.data, '../model/' + df);
+                config.inputs.df, '../data/' + df);
+            fs.copySync(
+                config.inputs.info, '../data/' + info);
+            fs.copySync(
+                config.inputs.function, '../data/' + func);
             svg.svg(files.map_data, config)
                 .then(function(svgs) {
                     // generate pngs
@@ -137,6 +162,11 @@ if (argv.config) {
     if (argv.web) {
         _generateWeb(config);
     }
+}
+
+// clean the web folders
+if (argv.cw){
+    _cleanWeb();
 }
 
 // remove artifacts

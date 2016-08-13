@@ -4,8 +4,9 @@
 config = {
     "inputs": {
         // model input data
-        "data": "world/df_world.csv",
-
+        "df": "world/df_world.csv",
+        "info": "world/inputs_info.csv",
+        "function": "world/res_ind_lib.py"
     },
     // model outputs
     "outputs": ['risk', 'resilience', 'risk_to_assets'],
