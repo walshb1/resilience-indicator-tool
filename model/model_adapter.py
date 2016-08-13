@@ -2,36 +2,43 @@
 
 """Wrapper for running Socio-economic resilience indicator model."""
 
+import argparse
+import importlib
+import json
+import logging
+import os
 import sys
 import time
-import argparse
-import logging
-import json
+
 import pandas as pd
 
-from res_ind_lib import compute_resiliences
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(
+    os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 if sys.version_info[0] < 3:
     from StringIO import StringIO
 else:
     from io import StringIO
 
-logging.basicConfig(filename='model.log', level=logging.DEBUG)
+logging.basicConfig(filename='model/model.log', level=logging.DEBUG)
 
 
 class Model():
     """Runs the resilience model."""
 
-    def __init__(self, data_frame=None, debug=False):
+    def __init__(self, data_frame=None, model_function=None, debug=False):
         d = json.loads(data_frame)
         self.data_frame = pd.DataFrame.from_dict({'data': d}, orient='index')
         self.data_frame.index.name = 'data'
         self.data_frame = pd.read_csv(
             StringIO(self.data_frame.to_csv()), sep=",", index_col=0)
+        self.model_function = model_function
         self.debug = debug
 
     def run(self):
-        output = compute_resiliences(self.data_frame)
+        output = self.model_function(self.data_frame)
         return output
 
 if __name__ == '__main__':
@@ -40,6 +47,9 @@ if __name__ == '__main__':
         description="Run the Socio-economic Resilience Model.")
     parser.add_argument('-d', '--data-frame', required=True,
                         dest="data_frame", help="The input data frame")
+    parser.add_argument('-m', '--model-function', required=True,
+                        dest='model_function', help='The model function to run'
+                        )
     args = parser.parse_args()
     config = {}
     for k, v in vars(args).items():
@@ -48,12 +58,17 @@ if __name__ == '__main__':
         else:
             config[k] = v
     data_frame = config.get('data_frame')
+    mf = config.get('model_function')
+    m = mf.split('.')[0]
+    f = mf.split('.')[1]
+    module = importlib.import_module('data.' + m)
+    model_function = getattr(module, f)
     debug = False
     if config.get('debug'):
         debug = True
 
     model = Model(
-        data_frame=data_frame, debug=debug
+        data_frame=data_frame, model_function=model_function, debug=debug
     )
     startTime = time.time()
     output = model.run()

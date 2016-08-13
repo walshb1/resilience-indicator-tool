@@ -21,7 +21,7 @@
     "default_output": "resilience",
     "default_feature": "AUS",
     "model_data": "df_world.csv",
-    "model_function": "a_function.py",
+    "model_function": "res_ind_lib.compute_resiliences",
     "map": {
         "width": 500,
         "height": 350

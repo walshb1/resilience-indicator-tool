@@ -1,7 +1,8 @@
 var Q = require('q'),
     python = require('python-shell'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs')
+    config = require('../conf/config');
 
 var model = {};
 
@@ -12,7 +13,7 @@ model.run = function(inputs) {
         mode: 'text',
         pythonOptions: ['-u'],
         scriptPath: './',
-        args: ['-d=' + JSON.stringify(inputs)]
+        args: ['-d=' + JSON.stringify(inputs), '-m=' + config.model_function]
     }
 
     python.run('/model/model_adapter.py', options, function(err, results) {

@@ -28,13 +28,13 @@ router.post('/runmodel', function(req, res) {
 // gets the map features as topojson
 router.get('/features.json', function(req, res) {
     res.setHeader("content-type", "application/json");
-    fs.createReadStream("maps/map_data.topojson").pipe(res);
+    fs.createReadStream("data/map_data.topojson").pipe(res);
 });
 
 // gets the inputs info data
 router.get('/inputs.json', function(req, res) {
     res.setHeader("content-type", "application/json");
-    fs.createReadStream('model/inputs_info.csv')
+    fs.createReadStream('data/inputs_info.csv')
         .pipe(csv2json({}))
         .pipe(res);
 });
@@ -48,7 +48,7 @@ router.get('/config.json', function(req, res) {
 // gets the inital model data
 router.get('/modeldata.json', function(req, res){
     res.setHeader("content-type", "application/json");
-    fs.createReadStream('model/' + config.model_data)
+    fs.createReadStream('data/' + config.model_data)
         .pipe(csv2json({}))
         .pipe(res);
 })
