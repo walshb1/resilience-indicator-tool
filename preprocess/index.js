@@ -67,7 +67,7 @@ function _clean() {
 
 function _cleanWeb() {
     var d = Q.defer();
-    glob('..{/data/*,/public/images/*_thumb.png}', function(err, files) {
+    glob('..{/conf/config.json, /data/*, /public/images/*_thumb.png}', function(err, files) {
         if (err) return console.log(err);
         for (var i in files) {
             var file = path.resolve(__dirname, './', files[i]);
@@ -130,12 +130,18 @@ function _generateWeb(config) {
             var func = config.inputs.function.split('/')[1];
             fs.copySync(
                 files.map_data, '../data/' + files.map_data);
+            console.log('Copied map data to web data folder');
             fs.copySync(
                 config.inputs.df, '../data/' + df);
+            console.log('Copied model data to web data folder');
             fs.copySync(
                 config.inputs.info, '../data/' + info);
+            console.log('Copied inputs info to web data folder')
             fs.copySync(
                 config.inputs.function, '../data/' + func);
+            console.log('Copied resilience function to web data folder');
+            fs.copySync(config.web_config, '../conf/config.json');
+            console.log('Copied web configuration to web conf folder');
             svg.svg(files.map_data, config)
                 .then(function(svgs) {
                     // generate pngs

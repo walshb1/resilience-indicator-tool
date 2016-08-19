@@ -2,6 +2,8 @@
  * Configuration for resilience tool map preprocessing.
  */
 config = {
+    // the model instance webapp configuration
+    "web_config": "world/web_config.json",
     "inputs": {
         // model input data
         "df": "world/df.csv",

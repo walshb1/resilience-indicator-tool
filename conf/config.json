@@ -13,17 +13,16 @@
             "gradient": ["#edf8fb", "#6e016b"]
         }
     },
-    "inputs": ["axfin_p", "axfin_r", "axhealth", "finance_pre",
-        "pe", "plgp", "prepare_scaleup", "pv", "rating", "share1",
-        "social_p", "social_r", "unemp", "protection", "fa", "v"
+    "inputs": [
+	    "fap", "far", "gdp_pc_pp", "cp", "cr", "pi", "pov_head", "protection", "shewp", "shewr", "social_p", "social_r", "T_rebuild_K", "v_p", "v_r"
     ],
-    "default_input": "axfin_p",
+    "default_input": "fap",
     "default_output": "resilience",
-    "default_feature": "AUS",
-    "model_data": "df.csv",
+    "default_feature": "abra",
+    "model_data": "df_phl_demo.csv",
     "model_function": "res_ind_lib.compute_resiliences",
     "map": {
         "width": 500,
-        "height": 350
+        "height": 500
     }
 }
