@@ -93,12 +93,9 @@ generate.svg = function(file, config) {
     mapdata = JSON.parse(model_data);
     model_features = topojson.feature(mapdata, mapdata.objects.model_features).features;
 
-    outputDomains = _populateOutputDomains(model_features);
-
     jsdom.env("<svg></svg>", scripts, function(errors, window) {
         for (var o in outputs) {
             var output = outputs[o];
-            var colorScale = _colorScale(output, outputDomains[output]);
             var d3 = window.d3,
                 svg = d3.select("svg");
             svg.attr("width", width)
@@ -140,13 +137,7 @@ generate.svg = function(file, config) {
                     return sprintf("feature %s", cls);
                 })
                 .style("fill", function(d) {
-                    //if output value exists, assign it a color
-                    var value = d.properties[output];
-                    if (value) {
-                        return colorScale(value);
-                    } else {
-                        return "#ccc";
-                    }
+                     return config.output_minimap_colors[output];    
                 })
                 .attr("d", path);
 

@@ -10,7 +10,7 @@ var topojson = require('./topojson'),
     child_process = require('child_process');
 
 var argv = require('yargs')
-    .usage('Usage: $0 [--config config.js, --clean, --svg, --web, --topojson]')
+    .usage('Usage: $0 [--config config.js, --clean, --clean-web, --svg, --web, --topojson]')
     .option('config', {
         alias: 'c',
         describe: 'The preprocess configuration file',

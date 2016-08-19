@@ -10,6 +10,11 @@ config = {
     },
     // model outputs
     "outputs": ['risk', 'resilience', 'risk_to_assets'],
+    "output_minimap_colors":{
+        'risk': '#88419D',
+        'resilience': '#EF6548',
+        'risk_to_assets': '#4EB3D3'
+    },
     "layers": {
         // shapefile layers to convert to topojson
         "model_features": {
