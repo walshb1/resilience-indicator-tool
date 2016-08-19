@@ -67,7 +67,7 @@ function _clean() {
 
 function _cleanWeb() {
     var d = Q.defer();
-    glob('..{/conf/config.json, /data/*, /public/images/*_thumb.png}', function(err, files) {
+    glob('..{/conf/config.json,/data/*,/public/images/*_thumb.png}', function(err, files) {
         if (err) return console.log(err);
         for (var i in files) {
             var file = path.resolve(__dirname, './', files[i]);
