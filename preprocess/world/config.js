@@ -4,7 +4,7 @@
 config = {
     "inputs": {
         // model input data
-        "df": "world/df_world.csv",
+        "df": "world/df.csv",
         "info": "world/inputs_info.csv",
         "function": "world/res_ind_lib.py"
     },
@@ -18,13 +18,13 @@ config = {
             // input shapefile name - relative to index.js
             "shape_file": "world/shp/WB_CountryPolys.shp",
             // fields to preserve from input shapefile to output topojson
-            "filter_fields": "name,id",
+            "filter_fields": "_Name,ISO_Codes",
             // rename input fields in output topojson
-            "rename_fields": "",
+            "rename_fields": "name=_Name,id=ISO_Codes",
             // join field on input data
             "data_join_field": "id",
             // join field on shpapefile
-            "shp_join_field": "id",
+            "shp_join_field": "ISO_Codes",
         },
         "coastlines": {
             // layer name in topojson
@@ -90,7 +90,7 @@ config = {
                 "fill": "none"
             },
             "disputed_areas":{
-                "fill": "#E0E0E0"
+                "fill": "#CCC"
             },
             "dotted_line": {
                 "fill": "none",
