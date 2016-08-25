@@ -113,7 +113,9 @@ _populateOutputDomains = function() {
         outputDomains[idx] = {
             'domain': [],
             'descriptor': output.descriptor,
-            'gradient': output.gradient
+            'gradient': output.gradient,
+            'number_type': output.number_type,
+            'precision': output.precision
         };
         $.each(app.state.model, function(i, data) {
             var val = data[idx];
@@ -189,6 +191,7 @@ _createScatterPlots = function() {
 _drawMap = function() {
     // resilience selected by default
     var config = _renderConfig();
+    map.outputs = app.state.outputDomains;
     map.draw(config, app.state.layers, app.state.model)
         .then(function() {
             $('#title').html(config.chloropleth_title);
@@ -512,7 +515,10 @@ $(document).on('display-output-data', function(event) {
     var chl_field = +model[config.chloropleth_field];
     $('#data').empty();
     $('#data').append('<span><strong>' + name + ' </strong></span>');
-    $('#data').append('<span>' + chl_field.toFixed(1) + '%</span>');
+    var output = app.state.outputDomains[config.chloropleth_field];
+    var percent = output.number_type == ('percent') ? ' %' : '';
+    var precision = +output.precision;
+    $('#data').append('<span>' + (+chl_field * 100).toFixed(precision) +  percent + '</span>');
 });
 
 $(document).on('outputselect', function(e) {

@@ -2,15 +2,21 @@
     "outputs": {
         "risk_to_assets": {
             "descriptor": "Risk to assets",
-            "gradient": ["#f0f9e8", "#08589e"]
+            "gradient": ["#f0f9e8", "#08589e"],
+            "number_type": "float",
+            "precision": 3
         },
         "resilience": {
             "descriptor": "Socioeconomic capacity",
-            "gradient": ["#990000", "#fef0d9"]
+            "gradient": ["#990000", "#fef0d9"],
+            "number_type": "percent",
+            "precision": 2
         },
         "risk": {
             "descriptor": "Risk",
-            "gradient": ["#edf8fb", "#6e016b"]
+            "gradient": ["#edf8fb", "#6e016b"],
+            "number_type": "float",
+            "precision": 3
         }
     },
     "inputs": [
