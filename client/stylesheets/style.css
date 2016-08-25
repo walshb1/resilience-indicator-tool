@@ -168,7 +168,7 @@ span.icon {
 }
 #outputs span.descriptor {}
 #outputs div {
-    min-height: 105px;
+    min-height: 120px !important;
 }
 
 /* inputs */
