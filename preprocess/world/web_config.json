@@ -4,7 +4,7 @@
             "descriptor": "Risk to assets",
             "gradient": ["#f0f9e8", "#08589e"],
             "number_type": "percent",
-            "precision": 3,
+            "precision": 3
         },
         "resilience": {
             "descriptor": "Socioeconomic capacity",
