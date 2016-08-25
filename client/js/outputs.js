@@ -129,18 +129,12 @@ outputs.getOutputDistributions = function(outputDomains) {
             .attr("stop-color", s2)
             .attr("stop-opacity", 1);
 
-        table.append("tr")
-            .append("td")
+        var tr = table.append("tr");
+        tr.append("td")
             .attr('width', '100%')
             .append('span')
             .attr("class", "descriptor")
-            .text(output.descriptor); // TODO: need to provide output descriptor
-
-        // tr.append("td")
-        //     .attr('width', '20%')
-        //     .append('span')
-        //     .attr("class", "value")
-        //     .text(' ');
+            .text(output.descriptor + ':');
 
 
         // add gaussian curve
@@ -184,6 +178,17 @@ outputs.getOutputDistributions = function(outputDomains) {
             .on("brushstart", brushstart)
             .on("brush", brushmove)
             .on("brushend", brushend);
+
+        table.append("tr")
+            .append("td")
+            .attr('width', '100%')
+            .append('span')
+            .attr("class", "output-value")
+            .text(function(){
+                var percent = output.number_type == ('percent') ? ' %' : '';
+                var precision = +output.precision;
+                return (+brush.extent()[1] * 100).toFixed(precision) +  percent;
+            });
 
         // keep a reference to the brush for the output domain
         outputs.domains[idx].brush = brush;
@@ -260,6 +265,10 @@ outputs.update = function(model, initial) {
             // and update the brush extent
             var extent = +model[domain];
             brush.extent([0, extent]);
+            var output = domains[domain];
+            var percent = output.number_type == ('percent') ? ' %' : '';
+            var precision = +output.precision;
+            $('#outputs #' + domain + ' .output-value').html((brush.extent()[1] * 100).toFixed(precision) + percent);
             var brushg = d3.selectAll('#outputs svg#' + domain + ' g.brush');
             brushg.transition()
                 .duration(750)
