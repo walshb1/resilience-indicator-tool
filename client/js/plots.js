@@ -34,7 +34,7 @@ plots.output = function(config) {
             obj['name'] = data['name'];
             obj['id'] = data['id']
             obj['gdp_pc_pp'] = data['gdp_pc_pp'];
-            obj[config.chloropleth_field] = data[config.chloropleth_field];
+            obj[config.chloropleth_field] = +data[config.chloropleth_field] * 100;
             obj['pop'] = data['pop'];
             domain.push(obj);
         }
