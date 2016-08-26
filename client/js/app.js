@@ -506,7 +506,6 @@ $(document).on('mapselect', function(e) {
         .style('border-top-color', String)
         .text(function(d) {
             var r = colors.invertExtent(d);
-            console.log(r);
             return formatPercent(r[0]);
         });
 
