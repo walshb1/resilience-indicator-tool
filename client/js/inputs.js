@@ -40,11 +40,10 @@ inputs.getSliders = function(inputConfig) {
 
         var x = d3.scale.linear()
             .domain(bounds)
-            .range([0, width])
-            .clamp(true);
+            .range([0, width]);
 
         var y = d3.scale.linear()
-            .domain([bounds[0], d3.max(bw, function(d) {
+            .domain([0, d3.max(bw, function(d) {
                 return d[1];
             })])
             .range([height, 0]);
