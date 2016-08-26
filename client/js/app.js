@@ -118,7 +118,7 @@ _populateOutputDomains = function() {
             'precision': output.precision
         };
         $.each(app.state.model, function(i, data) {
-            var val = data[idx];
+            var val = +data[idx];
             outputDomains[idx].domain.push(val);
         });
     });
