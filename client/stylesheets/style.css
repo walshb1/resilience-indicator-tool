@@ -305,3 +305,16 @@ button#resetmodel {
     float: left;
     margin: 0em;
 }
+
+#legend {
+    padding: 1.5em 0 0 1.5em;
+}
+
+li.key {
+    border-top-width: 12px;
+    border-top-style: solid;
+    font-size: .9em;
+    width: 16.66%;
+    padding-left: 0;
+    padding-right: 0;
+}

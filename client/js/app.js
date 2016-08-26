@@ -488,6 +488,32 @@ $(document).on('mapselect', function(e) {
         app.state.current_output
     );
     map.mapselect(app.state.selectedFeature, model);
+
+    var precision = app.state.outputDomains[chloropleth_field].precision;
+    var f = "^." + precision + "%";
+    var formatPercent = d3.format(f);
+    var colors = config.colorScale;
+    $('#legend').empty();
+    var legend = d3.select('#legend')
+        .append('ul')
+        .attr('class', 'list-inline');
+
+    var keys = legend.selectAll('li.key')
+        .data(colors.range());
+
+    keys.enter().append('li')
+        .attr('class', 'key')
+        .style('border-top-color', String)
+        .text(function(d) {
+            var r = colors.invertExtent(d);
+            console.log(r);
+            return formatPercent(r[0]);
+        });
+
+    $('#legend ul')
+        .append(
+            '<li class="key" style="border-top-color: #ccc;">No data</li>'
+        );
 });
 
 // handle input slider changed events

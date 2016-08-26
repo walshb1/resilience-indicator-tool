@@ -83,9 +83,9 @@ styles.colorScale = function(domain, data) {
         return a - b;
     });
 
-    var OrRd = colorbrewer.OrRd[7];
-    var BuPu = colorbrewer.BuPu[7];
-    var GnBu = colorbrewer.GnBu[7];
+    var OrRd = colorbrewer.OrRd[5];
+    var BuPu = colorbrewer.BuPu[5];
+    var GnBu = colorbrewer.GnBu[5];
 
     var RdOr = OrRd.slice(0).reverse();
 
