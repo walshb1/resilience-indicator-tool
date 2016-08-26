@@ -490,7 +490,7 @@ $(document).on('mapselect', function(e) {
     map.mapselect(app.state.selectedFeature, model);
 
     var precision = app.state.outputDomains[chloropleth_field].precision;
-    var f = "^." + precision + "%";
+    var f = "." + precision + "%";
     var formatPercent = d3.format(f);
     var colors = config.colorScale;
     $('#legend').empty();
