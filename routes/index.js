@@ -34,7 +34,7 @@ router.get('/features.json', function(req, res) {
 // gets the inputs info data
 router.get('/inputs.json', function(req, res) {
     res.setHeader("content-type", "application/json");
-    fs.createReadStream('data/inputs_info.csv')
+    fs.createReadStream('data/' + config.inputs_info)
         .pipe(csv2json({}))
         .pipe(res);
 });

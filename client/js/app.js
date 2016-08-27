@@ -35,9 +35,10 @@ _loadInitialData = function() {
             app.state.current_input = app.state.config.default_input;
             app.state.current_output = app.state.config.default_output;
 
-            // set models on plots
+            // set models and config on plots
             plots.model = app.state.model;
             plots.initialModel = app.state.initialModel;
+            plots.appConfig = app.state.config;
 
             d.resolve();
         });
