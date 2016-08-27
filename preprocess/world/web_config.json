@@ -23,11 +23,14 @@
         "pe", "plgp", "prepare_scaleup", "pv", "rating", "share1",
         "social_p", "social_r", "unemp", "protection", "fa", "v"
     ],
+    "inputs_info": "inputs_info.csv",
     "default_input": "axfin_p",
     "default_output": "resilience",
     "default_feature": "AUS",
     "model_data": "df.csv",
     "model_function": "res_ind_lib.compute_resiliences",
+    "pop": "pop",
+    "gdp": "gdp_pc_pp",
     "map": {
         "width": 500,
         "height": 350

@@ -243,6 +243,7 @@ g.tick> text {
 }
 span.value {
     width: 5em;
+    padding-right: .5em;
 }
 span.descriptor {
     font-weight: 500;
