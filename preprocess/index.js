@@ -153,6 +153,7 @@ function _generateWeb(config) {
                     }
                 });
         });
+        _clean();
 }
 
 // pick up the configuration

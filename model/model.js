@@ -18,6 +18,7 @@ model.run = function(inputs) {
 
     python.run('/model/model_adapter.py', options, function(err, results) {
         if (err) throw err;
+        console.log(results);
         d.resolve(results);
     });
 

@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import pandas as pd
 
@@ -6,6 +7,10 @@ import pandas as pd
 #from pandas_helper import get_list_of_index_names, broadcast_simple, concat_categories
 
 from scipy.interpolate import interp1d
+
+logging.basicConfig(
+    filename='model.log', level=logging.DEBUG,
+    format='%(asctime)s: %(levelname)s: %(message)s')
 
 
 #import pandas as pd
@@ -709,7 +714,7 @@ def average_over_rp(df,protection=None):
 
     #just drops rp index if df contains default_rp
     if default_rp in df.index.get_level_values("rp"):
-        print("default_rp detected, droping rp")
+        # print("default_rp detected, droping rp")
         return (df.T/protection).T.reset_index("rp",drop=True)
 
 

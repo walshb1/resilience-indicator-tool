@@ -355,6 +355,8 @@ app.runmodel = function() {
     var selected = app.state.selectedFeature.properties.id;
     var df = app.state.model[selected];
 
+    var name = df.name;
+
     // update the original feature with the new inputs
     // doesn't modify the original feature
     var model_params = $.extend(true, {}, df, inputs.getInputValues());
@@ -369,9 +371,10 @@ app.runmodel = function() {
     // update application state and redraw UI
     p.then(function(df) {
             var result = JSON.parse(df);
+            console.log(result);
             var obj = {};
             $.each(result, function(idx, d) {
-                obj[idx] = d['data'];
+                obj[idx] = d[name];
             });
             console.log('Got new model data: ', obj);
             $.event.trigger({

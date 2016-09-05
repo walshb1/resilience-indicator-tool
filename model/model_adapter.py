@@ -17,28 +17,37 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(
     os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-if sys.version_info[0] < 3:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
-logging.basicConfig(filename='model/model.log', level=logging.DEBUG)
+logging.basicConfig(
+    filename='model/model.log', level=logging.DEBUG,
+    format='%(asctime)s: %(levelname)s: %(message)s')
 
 
 class Model():
     """Runs the resilience model."""
 
-    def __init__(self, data_frame=None, model_function=None, debug=False):
+    def __init__(self, df=None, model_function=None, debug=False):
         d = json.loads(data_frame)
-        self.data_frame = pd.DataFrame.from_dict({'data': d}, orient='index')
-        self.data_frame.index.name = 'data'
-        self.data_frame = pd.read_csv(
-            StringIO(self.data_frame.to_csv()), sep=",", index_col=0)
+        df = pd.DataFrame.from_records([d], index='name')
+        for col in df.columns:
+            df[col] = self.to_float(df[col])
+        self.df = df
+        logging.debug(self.df)
+        with open('model_inputs.csv', 'w') as f:
+            f.write(self.df.to_csv())
+
         self.model_function = model_function
         self.debug = debug
 
+    def to_float(self, obj):
+        try:
+            return obj.astype('float')
+        except ValueError:
+            return obj
+
     def run(self):
-        output = self.model_function(self.data_frame)
+        output = self.model_function(self.df)
+        logging.debug(output)
         return output
 
 if __name__ == '__main__':
@@ -68,12 +77,10 @@ if __name__ == '__main__':
         debug = True
 
     model = Model(
-        data_frame=data_frame, model_function=model_function, debug=debug
+        df=data_frame, model_function=model_function, debug=debug
     )
     startTime = time.time()
     output = model.run()
     elapsed = time.time() - startTime
     logging.debug('Running model took: {}'.format(elapsed))
-    # with open('model_output.csv', 'w') as f:
-    #     f.write(output.to_csv())
     print(output.to_json())
