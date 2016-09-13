@@ -406,7 +406,7 @@ _selectBubble = function(feature, source, initialModel, key) {
                 return x(initial[plots.appConfig.gdp]);
             })
             .attr("cy", function() {
-                return y(initial[key]);
+                return y(initial[key] * 100);
             })
             .style({
                 'fill': 'lightgrey',
