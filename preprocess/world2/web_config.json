@@ -19,7 +19,7 @@
             "precision": 3
         }
     },
-    "inputs": ["macro_gdp_pc_pp", "macro_T_rebuild_K", "macro_borrow_abi", "macro_prepare_scaleup","macro_tau_tax", "axfin_cat_info__nonpoor", "axfin_cat_info__poor", "gamma_SP_cat_info__poor", "k_cat_info__nonpoor", "k_cat_info__poor","v_cat_info__nonpoor", "v_cat_info__poor", "shew_for_hazard_ratio", "hazard_ratio_fa__earthquake", "hazard_ratio_fa__flood","hazard_ratio_flood_poor","hazard_ratio_fa__tsunami","hazard_ratio_fa__wind"],
+    "inputs": ["macro_T_rebuild_K", "macro_borrow_abi", "macro_prepare_scaleup","macro_tau_tax", "axfin_cat_info__nonpoor", "axfin_cat_info__poor", "gamma_SP_cat_info__poor", "k_cat_info__nonpoor", "k_cat_info__poor","v_cat_info__nonpoor", "v_cat_info__poor", "shew_for_hazard_ratio", "hazard_ratio_fa__earthquake", "hazard_ratio_fa__flood","hazard_ratio_flood_poor","hazard_ratio_fa__tsunami","hazard_ratio_fa__wind"],
     "inputs_info": "inputs_info_wrapper.csv",
     "default_input": "axfin_cat_info__poor",
     "default_output": "resilience",

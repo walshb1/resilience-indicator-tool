@@ -207,7 +207,7 @@ div#inputs {
     stroke-width: 2px;
 }
 .resize.e {
-    cursor: move !important;
+    cursor: pointer !important;
     display: inline !important;
 }
 g.brush> .background {

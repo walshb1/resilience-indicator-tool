@@ -17,6 +17,8 @@ var plots = {};
 
 plots.appConfig = {};
 
+plots.current_input = {};
+
 /*
  * Draws the output plot using the provided config.
  */
@@ -38,7 +40,8 @@ plots.output = function(config) {
             obj['id'] = data['id'];
             obj['pop'] = +data[plots.appConfig.pop];
             obj['gdp_pc_pp'] = +data[plots.appConfig.gdp];
-            obj[config.chloropleth_field] = +data[config.chloropleth_field] * 100;
+            var val = +data[config.chloropleth_field];
+            obj[config.chloropleth_field] = val * 100;
             domain.push(obj);
         }
     });
@@ -140,51 +143,6 @@ plots.input = function(input, selectedFeature, initialModel) {
     $('#input-plot svg').empty();
 
     var domain = [];
-    // $.each(plots.model, function(idx, data) {
-    //     if (data['gdp_pc_pp']) {
-    //         var obj = {};
-    //         obj['name'] = data['name'];
-    //         obj['id'] = data['id']
-    //         obj['gdp_pc_pp'] = data['gdp_pc_pp'];
-    //         obj['pop'] = data['pop'];
-    //         var val = data[input.key];
-    //         if (selectedFeature) {
-    //             if (data.id == selectedFeature.properties.id) {
-    //                 var extent = +input.brush.extent()[1].toFixed(5);
-    //                 obj[input.key] = extent;
-    //                 domain.push(obj);
-    //             }
-    //             else {
-    //                 if (input.lower == 0 && input.upper == 0){
-    //                     obj[input.key] = val;
-    //                     domain.push(obj);
-    //                 }
-    //                 else if (val > input.upper){
-    //                     obj[input.key] = input.upper;
-    //                     domain.push(obj);
-    //                 }
-    //                 else {
-    //                     obj[input.key] = val;
-    //                     domain.push(obj);
-    //                 }
-    //             }
-    //         }
-    //         else {
-    //             if (input.lower == 0 && input.upper == 0){
-    //                 obj[input.key] = val;
-    //                 domain.push(obj);
-    //             }
-    //             else if (val > input.upper){
-    //                 obj[input.key] = input.upper;
-    //                 domain.push(obj);
-    //             }
-    //             else {
-    //                 obj[input.key] = val;
-    //                 domain.push(obj);
-    //             }
-    //         }
-    //     }
-    // });
 
     $.each(plots.model, function(idx, data) {
         var obj = {};
@@ -261,16 +219,20 @@ plots.input = function(input, selectedFeature, initialModel) {
 
     domain.forEach(function(d) {
         d.gdp_pc_pp = +d.gdp_pc_pp;
-        d[input.key] = +d[input.key];
+        var val = +d[input.key];
+        if (input.number_type == 'percent'){
+            val *= 100;
+        }
+        d[input.key] = val;
         d.pop = +d.pop;
     });
 
     // x and y domains should be set via config file
     x.domain(d3.extent(domain, function(d) {
-        return d.gdp_pc_pp; // TODO: should be configurable, need label
+        return d.gdp_pc_pp;
     })).nice();
     y.domain(d3.extent(domain, function(d) {
-        return d[input.key]; // TODO: should be configurable, need label
+        return d[input.key];
     })).nice();
 
     svg.selectAll(".dot")
@@ -358,6 +320,7 @@ plots.inputchanged = function(input, selectedFeature, initialModel) {
     var initial = initialModel[id];
     // redraw the plot based on the current input
     plots.input(input, selectedFeature, initial);
+    plots.curent_input = input;
     _selectBubble(selectedFeature, 'input-plot', initialModel, input.key);
 }
 
@@ -384,15 +347,14 @@ _selectBubble = function(feature, source, initialModel, key) {
         p.selectAll('circle.initial').remove();
         var x = d3.scale.linear()
             .range([0, width]);
-
         var y = d3.scale.linear()
             .range([height, 0]);
-        var domain = _getDomain(initialModel, source, key);
+        var domain = _getDomain(plots.initialModel, source, key);
         x.domain(d3.extent(domain, function(d) {
             return d.gdp_pc_pp;
         })).nice();
         y.domain(d3.extent(domain, function(d) {
-            return d[key];
+            return d[key] * 100;
         })).nice();
 
         p.append('circle')
@@ -413,10 +375,7 @@ _selectBubble = function(feature, source, initialModel, key) {
                 'stroke-width': '2px',
                 'stroke': 'darkgrey'
             })
-            .style("opacity", '1')
-            .on('mouseover', function() {
-                // console.log('initial-' + initia.id);
-            })
+            .style("opacity", '1');
     }
 
     var s2 = d3.select(n.parentNode.appendChild(
@@ -431,7 +390,7 @@ _selectBubble = function(feature, source, initialModel, key) {
             })
         })
 
-    n.remove();
+    s1.remove();
 }
 
 _getDomain = function(initialModel, source, key) {
@@ -440,7 +399,9 @@ _getDomain = function(initialModel, source, key) {
         for (var model in initialModel) {
             var obj = {};
             m = initialModel[model];
-            obj[key] = +m[key];
+            obj.id = m.id;
+            var val = +m[key];
+            obj[key] = val;
             obj.gdp_pc_pp = +m[plots.appConfig.gdp];
             obj.pop = +m[plots.appConfig.pop];
             domain.push(obj);
@@ -451,6 +412,7 @@ _getDomain = function(initialModel, source, key) {
         for (var model in initialModel) {
             m = initialModel[model];
             var obj = {};
+            obj.id = m.id;
             obj.gdp_pc_pp = +m[plots.appConfig.gdp];
             obj.pop = +m[plots.appConfig.gdp];
             var val = +m[key];
